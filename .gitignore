@@ -1,0 +1,243 @@
+# ============================================
+# ARCHIVOS DEL SISTEMA OPERATIVO
+# ============================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+*.AppleDouble
+*.AppleDesktop
+*.Trashes
+
+# Linux
+*~
+
+# ============================================
+# EDITORES Y ENTORNOS DE DESARROLLO
+# ============================================
+
+# Visual Studio Code
+.vscode/
+*.code-workspace
+.vscode-test/
+*.vsix
+
+# IntelliJ / WebStorm / PhpStorm / etc.
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+*.sublime-*
+
+# Vim
+*.swp
+*.swo
+*.un~
+*.~*
+
+# Emacs
+*~
+\#*#
+.\#*
+
+# ============================================
+# DEPENDENCIAS Y PAQUETES
+# ============================================
+
+# Node.js / JavaScript
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+.npm/
+.eslintcache
+.parcel-cache/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pdm.toml
+.pdm-python
+.pdm/
+
+# PHP
+vendor/
+composer.lock
+.phpunit.result.cache
+*.phar
+
+# Ruby
+.bundle/
+vendor/bundle/
+*.gem
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+target/
+.classpath
+.project
+.settings/
+*.iml
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+# ============================================
+# ARCHIVOS DE ENTORNO Y CONFIGURACIÓN
+# ============================================
+
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+.env.test
+
+# Configuración de bases de datos
+*.db
+*.sqlite
+*.sqlite3
+
+# ============================================
+# ARCHIVOS DE LOGS Y TEMPORALES
+# ============================================
+
+# Logs
+logs/
+*.log
+*.log.*
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporales
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+
+# ============================================
+# ARCHIVOS COMPILADOS Y DE BUILD
+# ============================================
+
+# Build / dist
+dist/
+build/
+out/
+*.min.js
+*.min.css
+*.bundle.js
+*.chunk.js
+
+# ============================================
+# ARCHIVOS DE DATOS (¡IMPORTANTE!)
+# ============================================
+
+# Datos reales (protegidos)
+data/
+*.xlsx
+*.xls
+*.csv
+*.json
+*.xml
+*.yaml
+*.yml
+
+# Datos de clientes (¡NUNCA SUBAS DATOS REALES!)
+clientes/
+client_data/
+informacion_financiera/
+
+# ============================================
+# ARCHIVOS DE PROYECTO ESPECÍFICOS
+# ============================================
+
+# Control-Capex específico
+*.bak
+*.old
+backup_*
+temp_*
+*.tmp
+
+# ============================================
+# OTROS ARCHIVOS COMUNES
+# ============================================
+
+# Archivos de cobertura de código
+*.cover
+*.coverage
+.coverage.*
+
+# Archivos de dump de base de datos
+*.dump
+*.sql
+*.sql.gz
+
+# Archivos de imagen grandes (opcional)
+*.psd
+*.ai
+*.tiff
+*.bmp
+
+# Archivos comprimidos (opcional)
+*.zip
+*.rar
+*.7z
+*.gz
+*.tar
+
+# ============================================
+# ARCHIVOS DE DEPLOYMENT
+# ============================================
+
+# .vercel
+.vercel/
+.netlify/
+.aws-sam/
+serverless/
