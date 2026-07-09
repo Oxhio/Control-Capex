@@ -1,0 +1,14 @@
+LOGO DE CONTROL-CAPEX
+=====================
+
+Este archivo será reemplazado por el logo real del proyecto.
+
+Especificaciones recomendadas:
+- Formato: PNG
+- Tamaño: 200x200 píxeles
+- Fondo: Transparente
+- Colores: #1a3c6e (azul oscuro) y #4a8bc2 (azul claro)
+
+Fecha de creación: 2026-07-09
+Proyecto: Control-Capex
+Autor: oxhio
