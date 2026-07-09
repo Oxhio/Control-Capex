@@ -1,1 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control-Capex - Presupuestos</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para presupuestos */
+        .budget-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
 
+        .budget-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid #1a3c6e;
+        }
+
+        .budget-card .label {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .budget-card .value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #1a3c6e;
+        }
+
+        .budget-card .sub-value {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.25rem;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+
+        .progress-bar .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: linear-gradient(90deg, #1a3c6e, #4a8bc2);
+            transition: width 0.5s ease;
+        }
+
+        .budget-form {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.6rem 1rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-chart-pie"></i>
+                <span>Control-Capex</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="activos.html"><i class="fas fa-boxes"></i> Activos</a></li>
+                <li><a href="presupuestos.html" class="active"><i class="fas fa-coins"></i> Presupuestos</a></li>
+                <li><a href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+            </ul>
+            <div class="nav-user">
+                <i class="fas fa-user-circle"></i>
+                <span>Admin</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-coins"></i> Gestión de Presupuestos</h1>
+            <p>Controla y monitorea los presupuestos de capital</p>
+        </div>
+
+        <!-- Resumen de presupuestos -->
+        <div class="budget-summary">
+            <div class="budget-card">
+                <div class="label">Presupuesto Total</div>
+                <div class="value">$1,500,000</div>
+                <div class="sub-value">Año fiscal 2026</div>
+            </div>
+            <div class="budget-card" style="border-left-color: #10b981;">
+                <div class="label">Ejecutado</div>
+                <div class="value" style="color: #10b981;">$1,234,567</div>
+                <div class="sub-value">82.3% del total</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 82.3%;"></div>
+                </div>
+            </div>
+            <div class="budget-card" style="border-left-color: #ef4444;">
+                <div class="label">Disponible</div>
+                <div class="value" style="color: #ef4444;">$265,433</div>
+                <div class="sub-value">17.7% restante</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 17.7%; background: #ef4444;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario para agregar presupuesto -->
+        <div class="budget-form">
+            <h2 style="color: #1a3c6e; margin-bottom: 1.5rem;">
+                <i class="fas fa-plus-circle"></i> Asignar Presupuesto
+            </h2>
+            <form id="budgetForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="departamento">Departamento</label>
+                        <select id="departamento" required>
+                            <option value="">Seleccionar...</option>
+                            <option value="IT">IT / Tecnología</option>
+                            <option value="Operaciones">Operaciones</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Recursos Humanos">Recursos Humanos</option>
+                            <option value="Finanzas">Finanzas</option>
+                            <option value="Ventas">Ventas</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="concepto">Concepto</label>
+                        <input type="text" id="concepto" placeholder="Ej: Compra de servidores" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="monto">Monto ($)</label>
+                        <input type="number" id="monto" placeholder="Ej: 50000" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-success">
+                    <i class="fas fa-save"></i> Asignar Presupuesto
+                </button>
+            </form>
+        </div>
+
+        <!-- Tabla de presupuestos asignados -->
+        <section class="table-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list"></i> Presupuestos Asignados</h2>
+                <span style="color: #666;">Total: <strong id="totalPresupuestos">0</strong></span>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Departamento</th>
+                            <th>Concepto</th>
+                            <th>Monto</th>
+                            <th>Fecha Asignación</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="presupuestosTable">
+                        <!-- Datos cargados por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Datos de ejemplo para presupuestos
+        let presupuestos = [
+            { id: 1, departamento: 'IT', concepto: 'Servidores cloud', monto: 45000, fecha: '2026-01-10', estado: 'aprobado' },
+            { id: 2, departamento: 'Marketing', concepto: 'Campaña digital', monto: 12500, fecha: '2026-01-15', estado: 'pendiente' },
+            { id: 3, departamento: 'Operaciones', concepto: 'Mobiliario', monto: 8700, fecha: '2026-01-20', estado: 'aprobado' },
+            { id: 4, departamento: 'IT', concepto: 'Licencias software', monto: 3500, fecha: '2026-02-01', estado: 'pendiente' }
+        ];
+
+        function formatearMoneda(monto) {
+            return new Intl.NumberFormat('es-CL', {
+                style: 'currency',
+                currency: 'CLP',
+                minimumFractionDigits: 0
+            }).format(monto);
+        }
+
+        function obtenerEstadoTexto(estado) {
+            const estados = {
+                'aprobado': '✅ Aprobado',
+                'pendiente': '⏳ Pendiente',
+                'rechazado': '❌ Rechazado'
+            };
+            return estados[estado] || estado;
+        }
+
+        function renderizarPresupuestos() {
+            const tbody = document.getElementById('presupuestosTable');
+            tbody.innerHTML = '';
+            let total = 0;
+            
+            presupuestos.forEach(p => {
+                total += p.monto;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${p.departamento}</td>
+                    <td>${p.concepto}</td>
+                    <td>${formatearMoneda(p.monto)}</td>
+                    <td>${p.fecha}</td>
+                    <td>${obtenerEstadoTexto(p.estado)}</td>
+                    <td>
+                        <button class="btn-action" onclick="editarPresupuesto(${p.id})" title="Editar">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action" onclick="eliminarPresupuesto(${p.id})" title="Eliminar">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            
+            document.getElementById('totalPresupuestos').textContent = formatearMoneda(total);
+        }
+
+        document.getElementById('budgetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const departamento = document.getElementById('departamento').value;
+            const concepto = document.getElementById('concepto').value;
+            const monto = parseInt(document.getElementById('monto').value);
+            
+            if (!departamento || !concepto || !monto) {
+                alert('Por favor completa todos los campos');
+                return;
+            }
+            
+            const nuevoPresupuesto = {
+                id: presupuestos.length + 1,
+                departamento: departamento,
+                concepto: concepto,
+                monto: monto,
+                fecha: new Date().toISOString().split('T')[0],
+                estado: 'pendiente'
+            };
+            
+            presupuestos.push(nuevoPresupuesto);
+            renderizarPresupuestos();
+            this.reset();
+            alert('✅ Presupuesto asignado correctamente');
+        });
+
+        function editarPresupuesto(id) {
+            const p = presupuestos.find(item => item.id === id);
+            if (!p) return;
+            
+            const nuevoConcepto = prompt('Concepto:', p.concepto);
+            if (nuevoConcepto) p.concepto = nuevoConcepto;
+            
+            const nuevoMonto = parseInt(prompt('Monto:', p.monto));
+            if (!isNaN(nuevoMonto)) p.monto = nuevoMonto;
+            
+            renderizarPresupuestos();
+        }
+
+        function eliminarPresupuesto(id) {
+            if (!confirm('¿Estás seguro de eliminar este presupuesto?')) return;
+            presupuestos = presupuestos.filter(p => p.id !== id);
+            renderizarPresupuestos();
+        }
+
+        document.addEventListener('DOMContentLoaded', renderizarPresupuestos);
+    </script>
+</body>
+</html>
