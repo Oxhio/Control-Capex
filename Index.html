@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control-Capex - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-chart-pie"></i>
+                <span>Control-Capex</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="pages/activos.html"><i class="fas fa-boxes"></i> Activos</a></li>
+                <li><a href="pages/presupuestos.html"><i class="fas fa-coins"></i> Presupuestos</a></li>
+                <li><a href="pages/reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+            </ul>
+            <div class="nav-user">
+                <i class="fas fa-user-circle"></i>
+                <span>Admin</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
+            <p>Resumen general de gastos de capital</p>
+        </div>
+
+        <!-- Tarjetas de resumen -->
+        <section class="cards-container">
+            <div class="card">
+                <div class="card-icon" style="background: #1a3c6e;">
+                    <i class="fas fa-building"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Total Inversiones</h3>
+                    <p class="card-value">$1,234,567</p>
+                    <span class="card-change positive">↑ 12% vs mes anterior</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: #2a5f9e;">
+                    <i class="fas fa-project-diagram"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Proyectos Activos</h3>
+                    <p class="card-value">12</p>
+                    <span class="card-change positive">↑ 3 nuevos</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: #4a8bc2;">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Presupuesto Restante</h3>
+                    <p class="card-value">$345,678</p>
+                    <span class="card-change negative">↓ 8% del total</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon" style="background: #6aabdf;">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <div class="card-content">
+                    <h3>Inversiones este mes</h3>
+                    <p class="card-value">$89,234</p>
+                    <span class="card-change positive">↑ 5% vs mes anterior</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tabla de últimos movimientos -->
+        <section class="table-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list"></i> Últimos Movimientos</h2>
+                <button class="btn-primary" onclick="agregarMovimiento()">
+                    <i class="fas fa-plus"></i> Agregar
+                </button>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Concepto</th>
+                            <th>Categoría</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movimientosTable">
+                        <!-- Los datos se cargan con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
