@@ -1,1 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control-Capex - Reportes</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos específicos para reportes */
+        .report-filters {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
 
+        .report-filters .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .report-filters .filter-group label {
+            display: block;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        .report-filters .filter-group select,
+        .report-filters .filter-group input {
+            width: 100%;
+            padding: 0.5rem 0.8rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .btn-info {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .btn-info:hover {
+            background: #2563eb;
+        }
+
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.3s;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .report-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .report-stat {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .report-stat .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1a3c6e;
+        }
+
+        .report-stat .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.3rem;
+        }
+
+        .report-stat .stat-icon {
+            font-size: 2rem;
+            color: #4a8bc2;
+            margin-bottom: 0.5rem;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+
+        .chart-container h3 {
+            color: #1a3c6e;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            padding: 1rem 0;
+            gap: 1rem;
+        }
+
+        .chart-bar-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 60px;
+            background: linear-gradient(180deg, #1a3c6e, #4a8bc2);
+            border-radius: 4px 4px 0 0;
+            min-height: 10px;
+            transition: height 0.5s ease;
+        }
+
+        .chart-bar-label {
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .chart-bar-value {
+            font-size: 0.7rem;
+            color: #333;
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .export-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .report-filters {
+                flex-direction: column;
+            }
+            .report-filters .filter-group {
+                width: 100%;
+            }
+            .chart-bars {
+                height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-chart-pie"></i>
+                <span>Control-Capex</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="activos.html"><i class="fas fa-boxes"></i> Activos</a></li>
+                <li><a href="presupuestos.html"><i class="fas fa-coins"></i> Presupuestos</a></li>
+                <li><a href="reportes.html" class="active"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+            </ul>
+            <div class="nav-user">
+                <i class="fas fa-user-circle"></i>
+                <span>Admin</span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1><i class="fas fa-chart-bar"></i> Reportes y Análisis</h1>
+            <p>Visualiza y exporta reportes de gastos de capital</p>
+        </div>
+
+        <!-- Filtros -->
+        <div class="report-filters">
+            <div class="filter-group">
+                <label for="reportPeriodo">Periodo</label>
+                <select id="reportPeriodo">
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label for="reportCategoria">Categoría</label>
+                <select id="reportCategoria">
+                    <option value="todos">Todos</option>
+                    <option value="infraestructura">Infraestructura</option>
+                    <option value="software">Software</option>
+                    <option value="mobiliario">Mobiliario</option>
+                    <option value="capacitacion">Capacitación</option>
+                </select>
+            </div>
+            <div class="filter-group" style="flex: 0.5;">
+                <button class="btn-info" onclick="actualizarReportes()">
+                    <i class="fas fa-sync"></i> Actualizar
+                </button>
+            </div>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="report-cards">
+            <div class="report-stat">
+                <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                <div class="stat-value" id="statTotal">$1,234,567</div>
+                <div class="stat-label">Total Invertido</div>
+            </div>
+            <div class="report-stat">
+                <div class="stat-icon"><i class="fas fa-folder-open"></i></div>
+                <div class="stat-value" id="statProyectos">12</div>
+                <div class="stat-label">Proyectos Activos</div>
+            </div>
+            <div class="report-stat">
+                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-value" id="statCompletados">8</div>
+                <div class="stat-label">Proyectos Completados</div>
+            </div>
+            <div class="report-stat">
+                <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                <div class="stat-value" id="statPendientes">4</div>
+                <div class="stat-label">Proyectos Pendientes</div>
+            </div>
+        </div>
+
+        <!-- Gráfico de barras -->
+        <div class="chart-container">
+            <h3><i class="fas fa-chart-simple"></i> Distribución por Categoría</h3>
+            <div class="chart-bars" id="chartBars">
+                <!-- Las barras se generan con JavaScript -->
+            </div>
+        </div>
+
+        <!-- Tabla de reporte detallado -->
+        <section class="table-section">
+            <div class="section-header">
+                <h2><i class="fas fa-list"></i> Detalle de Inversiones</h2>
+                <div class="export-buttons">
+                    <button class="btn-warning" onclick="exportarPDF()">
+                        <i class="fas fa-file-pdf"></i> PDF
+                    </button>
+                    <button class="btn-info" onclick="exportarExcel()">
+                        <i class="fas fa-file-excel"></i> Excel
+                    </button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Concepto</th>
+                            <th>Categoría</th>
+                            <th>Monto</th>
+                            <th>Estado</th>
+                            <th>Proyecto</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportesTable">
+                        <!-- Datos cargados por JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Datos de ejemplo para reportes
+        const reportesData = [
+            { fecha: '2026-01-15', concepto: 'Compra de servidores', categoria: 'Infraestructura', monto: 45000, estado: 'completado', proyecto: 'Cloud Migration' },
+            { fecha: '2026-01-20', concepto: 'Licencias de software', categoria: 'Software', monto: 12500, estado: 'pendiente', proyecto: 'Digitalización' },
+            { fecha: '2026-01-25', concepto: 'Mobiliario de oficina', categoria: 'Mobiliario', monto: 8700, estado: 'completado', proyecto: 'Office Renovation' },
+            { fecha: '2026-02-01', concepto: 'Capacitación del equipo', categoria: 'Capacitación', monto: 3500, estado: 'pendiente', proyecto: 'Team Training' },
+            { fecha: '2026-02-05', concepto: 'Software ERP', categoria: 'Software', monto: 28000, estado: 'completado', proyecto: 'ERP Implementation' },
+            { fecha: '2026-02-10', concepto: 'Equipos de red', categoria: 'Infraestructura', monto: 15300, estado: 'completado', proyecto: 'Network Upgrade' },
+            { fecha: '2026-02-15', concepto: 'Marketing digital', categoria: 'Marketing', monto: 6800, estado: 'pendiente', proyecto: 'Digital Marketing' },
+        ];
+
+        const categorias = ['Infraestructura', 'Software', 'Mobiliario', 'Capacitación', 'Marketing'];
+
+        function formatearMoneda(monto) {
+            return new Intl.NumberFormat('es-CL', {
+                style: 'currency',
+                currency: 'CLP',
+                minimumFractionDigits: 0
+            }).format(monto);
+        }
+
+        function obtenerEstadoTexto(estado) {
+            const estados = {
+                'completado': '✅ Completado',
+                'pendiente': '⏳ Pendiente',
+                'cancelado': '❌ Cancelado'
+            };
+            return estados[estado] || estado;
+        }
+
+        function renderizarReportes() {
+            const tbody = document.getElementById('reportesTable');
+            tbody.innerHTML = '';
+            
+            reportesData.forEach(r => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${r.fecha}</td>
+                    <td>${r.concepto}</td>
+                    <td>${r.categoria}</td>
+                    <td>${formatearMoneda(r.monto)}</td>
+                    <td>${obtenerEstadoTexto(r.estado)}</td>
+                    <td>${r.proyecto}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderizarGrafico() {
+            const container = document.getElementById('chartBars');
+            container.innerHTML = '';
+            
+            // Calcular totales por categoría
+            const totals = {};
+            categorias.forEach(cat => totals[cat] = 0);
+            reportesData.forEach(r => {
+                if (totals[r.categoria] !== undefined) {
+                    totals[r.categoria] += r.monto;
+                }
+            });
+            
+            const maxValue = Math.max(...Object.values(totals));
+            
+            categorias.forEach(cat => {
+                const value = totals[cat] || 0;
+                const height = maxValue > 0 ? (value / maxValue) * 100 : 0;
+                
+                const item = document.createElement('div');
+                item.className = 'chart-bar-item';
+                item.innerHTML = `
+                    <div class="chart-bar-value">${formatearMoneda(value)}</div>
+                    <div class="chart-bar" style="height: ${Math.max(height, 5)}%;"></div>
+                    <div class="chart-bar-label">${cat}</div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function actualizarEstadisticas() {
+            const total = reportesData.reduce((sum, r) => sum + r.monto, 0);
+            const completados = reportesData.filter(r => r.estado === 'completado').length;
+            const pendientes = reportesData.filter(r => r.estado === 'pendiente').length;
+            
+            document.getElementById('statTotal').textContent = formatearMoneda(total);
+            document.getElementById('statProyectos').textContent = reportesData.length;
+            document.getElementById('statCompletados').textContent = completados;
+            document.getElementById('statPendientes').textContent = pendientes;
+        }
+
+        function actualizarReportes() {
+            renderizarReportes();
+            renderizarGrafico();
+            actualizarEstadisticas();
+            alert('📊 Reportes actualizados correctamente');
+        }
+
+        function exportarPDF() {
+            alert('📄 Funcionalidad de exportación a PDF (próximamente)');
+        }
+
+        function exportarExcel() {
+            alert('📊 Funcionalidad de exportación a Excel (próximamente)');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            renderizarReportes();
+            renderizarGrafico();
+            actualizarEstadisticas();
+            console.log('📊 Módulo de reportes cargado correctamente');
+        });
+    </script>
+</body>
+</html>
