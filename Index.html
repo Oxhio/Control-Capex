@@ -1,98 +1,89 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Control-Capex - Dashboard</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- Font Awesome para iconos -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Control-Capex</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
-    <!-- Barra de navegación -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-logo">
-                <i class="fas fa-chart-pie"></i>
-                <span>Control-Capex</span>
+    <div class="container">
+        <!-- HEADER -->
+        <header class="header">
+            <h1><i class="fas fa-chart-pie"></i> Control-Capex</h1>
+            <div class="project-selector">
+                <label for="proyectoSelect"><i class="fas fa-folder-open"></i> Proyecto:</label>
+                <select id="proyectoSelect">
+                    <option value="global">🌐 Visión Global</option>
+                </select>
+                <span class="badge-proyectos" id="proyectosCount">2 activos</span>
             </div>
-            <ul class="nav-menu">
-                <li><a href="index.html" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
-                <li><a href="pages/activos.html"><i class="fas fa-boxes"></i> Activos</a></li>
-                <li><a href="pages/presupuestos.html"><i class="fas fa-coins"></i> Presupuestos</a></li>
-                <li><a href="pages/reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a></li>
-            </ul>
-            <div class="nav-user">
-                <i class="fas fa-user-circle"></i>
-                <span>Admin</span>
+        </header>
+
+        <!-- MÉTRICAS -->
+        <section class="metrics-grid" id="metricsGrid">
+            <div class="metric-card">
+                <div class="label">Total Inversiones</div>
+                <div class="value" id="totalInversiones">$69.700</div>
+                <span class="change up" id="changeTotal">↑ 12% vs mes anterior</span>
             </div>
-        </div>
-    </nav>
-
-    <!-- Contenido principal -->
-    <main class="main-content">
-        <div class="page-header">
-            <h1><i class="fas fa-chart-line"></i> Dashboard</h1>
-            <p>Resumen general de gastos de capital</p>
-        </div>
-
-        <!-- Tarjetas de resumen -->
-        <section class="cards-container">
-            <div class="card">
-                <div class="card-icon" style="background: #1a3c6e;">
-                    <i class="fas fa-building"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Total Inversiones</h3>
-                    <p class="card-value">$1,234,567</p>
-                    <span class="card-change positive">↑ 12% vs mes anterior</span>
-                </div>
+            <div class="metric-card">
+                <div class="label">Proyectos Activos</div>
+                <div class="value" id="proyectosActivos">2</div>
+                <span class="change up" id="changeProyectos">↑ 3 nuevos</span>
             </div>
+            <div class="metric-card">
+                <div class="label">Presupuesto Restante</div>
+                <div class="value" id="presupuestoRestante">$1.164.867</div>
+                <span class="change down" id="changePresupuesto">↓ 8% del total</span>
+            </div>
+            <div class="metric-card">
+                <div class="label">Inversiones este mes</div>
+                <div class="value" id="inversionesMes">$89.234</div>
+                <span class="change up" id="changeInversiones">↑ 5% vs mes anterior</span>
+            </div>
+        </section>
 
-            <div class="card">
-                <div class="card-icon" style="background: #2a5f9e;">
-                    <i class="fas fa-project-diagram"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Proyectos Activos</h3>
-                    <p class="card-value">12</p>
-                    <span class="card-change positive">↑ 3 nuevos</span>
+        <!-- GRÁFICOS -->
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-bar"></i> Inversiones por Categoría</h3>
+                <div class="chart-container">
+                    <canvas id="chartCategorias"></canvas>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-icon" style="background: #4a8bc2;">
-                    <i class="fas fa-wallet"></i>
-                </div>
-                <div class="card-content">
-                    <h3>Presupuesto Restante</h3>
-                    <p class="card-value">$345,678</p>
-                    <span class="card-change negative">↓ 8% del total</span>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-line"></i> Evolución Mensual</h3>
+                <div class="chart-container">
+                    <canvas id="chartEvolucion"></canvas>
                 </div>
             </div>
-
-            <div class="card">
-                <div class="card-icon" style="background: #6aabdf;">
-                    <i class="fas fa-calendar-check"></i>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-doughnut"></i> Distribución por Proyecto</h3>
+                <div class="chart-container">
+                    <canvas id="chartDistribucion"></canvas>
                 </div>
-                <div class="card-content">
-                    <h3>Inversiones este mes</h3>
-                    <p class="card-value">$89,234</p>
-                    <span class="card-change positive">↑ 5% vs mes anterior</span>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-pie"></i> Estado de Movimientos</h3>
+                <div class="chart-container">
+                    <canvas id="chartEstados"></canvas>
                 </div>
             </div>
         </section>
 
-        <!-- Tabla de últimos movimientos -->
-        <section class="table-section">
-            <div class="section-header">
-                <h2><i class="fas fa-list"></i> Últimos Movimientos</h2>
-                <button class="btn-primary" onclick="agregarMovimiento()">
-                    <i class="fas fa-plus"></i> Agregar
-                </button>
+        <!-- TABLA -->
+        <section class="table-wrapper">
+            <div class="table-header">
+                <h2><i class="fas fa-list-ul"></i> Últimos Movimientos</h2>
+                <div class="table-actions">
+                    <button class="btn btn-outline" id="btnFiltrar"><i class="fas fa-filter"></i> Filtrar</button>
+                    <button class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i> Nuevo</button>
+                </div>
             </div>
-            
-            <div class="table-container">
+            <div style="overflow-x:auto;">
                 <table>
                     <thead>
                         <tr>
@@ -101,16 +92,15 @@
                             <th>Categoría</th>
                             <th>Monto</th>
                             <th>Estado</th>
+                            <th>Proyecto</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
-                    <tbody id="movimientosTable">
-                        <!-- Los datos se cargan con JavaScript -->
-                    </tbody>
+                    <tbody id="tablaBody"></tbody>
                 </table>
             </div>
         </section>
-    </main>
+    </div>
 
     <script src="script.js"></script>
 </body>
