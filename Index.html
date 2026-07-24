@@ -9,10 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
     <!-- Chart.js -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-    <!-- Chart.js Plugin para DataLabels -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
 
     <style>
@@ -331,14 +328,6 @@
             background: #f7fafc;
         }
 
-        .btn-success {
-            background: #38a169;
-            color: white;
-        }
-        .btn-success:hover {
-            background: #2f855a;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -522,7 +511,6 @@
             }
         }
 
-        /* ===== SCROLL ===== */
         .table-scroll {
             overflow-x: auto;
             padding: 0 4px;
@@ -638,7 +626,7 @@
 
     <script>
         // ============================================================
-        //  DATOS - Adaptados a tu estructura
+        //  DATOS
         // ============================================================
         const data = {
             proyectos: [{
@@ -806,9 +794,9 @@
             const ejecutado = real + comprometido;
             const pct = presupuesto > 0 ? (ejecutado / presupuesto * 100) : 0;
 
-            if (pct > 100) return { label: '⚠️ Sobre ejecutado', class: 'badge-sobre', pct: pct };
-            if (pct > 90) return { label: '⚡ Cerca del límite', class: 'badge-alerta', pct: pct };
-            return { label: '✅ En rango', class: 'badge-ok', pct: pct };
+            if (pct > 100) return { label: '⚠️ Sobre ejecutado', class: 'badge-sobre' };
+            if (pct > 90) return { label: '⚡ Cerca del límite', class: 'badge-alerta' };
+            return { label: '✅ En rango', class: 'badge-ok' };
         }
 
         // ============================================================
@@ -873,24 +861,24 @@
                     datasets: [{
                         label: 'Presupuesto',
                         data: presupuestos,
-                        backgroundColor: 'rgba(45, 106, 159, 0.7)',
-                        borderColor: 'rgba(45, 106, 159, 1)',
+                        backgroundColor: 'rgba(45, 106, 159, 0.85)',
+                        borderColor: '#2d6a9f',
                         borderWidth: 1,
                         borderRadius: 4,
                         order: 2,
                     }, {
                         label: 'Real',
                         data: reales,
-                        backgroundColor: 'rgba(56, 161, 105, 0.8)',
-                        borderColor: 'rgba(56, 161, 105, 1)',
+                        backgroundColor: 'rgba(56, 161, 105, 0.85)',
+                        borderColor: '#38a169',
                         borderWidth: 1,
                         borderRadius: 4,
                         order: 1,
                     }, {
                         label: 'Comprometido',
                         data: comprometidos,
-                        backgroundColor: 'rgba(237, 137, 54, 0.8)',
-                        borderColor: 'rgba(237, 137, 54, 1)',
+                        backgroundColor: 'rgba(237, 137, 54, 0.85)',
+                        borderColor: '#ed8936',
                         borderWidth: 1,
                         borderRadius: 4,
                         order: 0,
@@ -1002,4 +990,83 @@
         function renderTabla(proyectos) {
             const tbody = document.getElementById('tablaBody');
             if (proyectos.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:40px; color:#718096
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:40px; color:#718096;">
+                    <i class="fas fa-inbox" style="font-size:28px; display:block; margin-bottom:8px;"></i>
+                    No hay POSPRE con este filtro
+                </td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = proyectos.map(p => {
+                const ejecutado = p.real + p.comprometido;
+                const pctReal = p.presupuesto > 0 ? (p.real / p.presupuesto * 100) : 0;
+                const pctComprometido = p.presupuesto > 0 ? (p.comprometido / p.presupuesto * 100) : 0;
+                const pctEjecutado = p.presupuesto > 0 ? (ejecutado / p.presupuesto * 100) : 0;
+                const estado = calcularEstado(p.presupuesto, p.real, p.comprometido);
+
+                return `<tr>
+                    <td><span class="badge-pospre">${p.pospre}</span></td>
+                    <td><span class="badge-cege">${p.cege}</span></td>
+                    <td class="monto monto-presupuesto">${formatCurrency(p.presupuesto)}</td>
+                    <td class="monto monto-real">${formatCurrency(p.real)}</td>
+                    <td class="monto monto-comprometido">${formatCurrency(p.comprometido)}</td>
+                    <td class="monto monto-disponible">${formatCurrency(p.disponible)}</td>
+                    <td>
+                        <div class="barra-ejecucion">
+                            <div class="segment segment-real" style="width:${Math.min(pctReal, 100)}%;"></div>
+                            <div class="segment segment-comprometido" style="width:${Math.min(pctComprometido, 100)}%;"></div>
+                            <span class="label-barra">${pctEjecutado.toFixed(1)}%</span>
+                        </div>
+                    </td>
+                    <td><span class="badge-estado ${estado.class}">${estado.label}</span></td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ============================================================
+        //  ACTUALIZAR DASHBOARD
+        // ============================================================
+
+        function actualizarDashboard() {
+            const cege = document.getElementById('filtroCEGE').value;
+            const proyectos = getProyectosFiltrados(cege);
+
+            actualizarMetricas(proyectos);
+            renderTabla(proyectos);
+            crearGraficos(proyectos);
+        }
+
+        // ============================================================
+        //  INICIALIZAR
+        // ============================================================
+
+        function inicializarFiltros() {
+            const selectCEGE = document.getElementById('filtroCEGE');
+            const cegeList = getCEGEs();
+            cegeList.forEach(cege => {
+                const opt = document.createElement('option');
+                opt.value = cege;
+                opt.textContent = `📁 ${cege}`;
+                selectCEGE.appendChild(opt);
+            });
+        }
+
+        // ============================================================
+        //  EVENTOS
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarFiltros();
+
+            document.getElementById('filtroCEGE').addEventListener('change', actualizarDashboard);
+
+            document.getElementById('btnExportar').addEventListener('click', function() {
+                alert('📤 Exportar datos a Excel');
+            });
+
+            actualizarDashboard();
+        });
+    </script>
+
+</body>
+</html>
