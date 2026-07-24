@@ -157,3 +157,58 @@ document.addEventListener('DOMContentLoaded', function() {
 window.agregarMovimiento = agregarMovimiento;
 window.editarMovimiento = editarMovimiento;
 window.eliminarMovimiento = eliminarMovimiento;
+/* ===== GRÁFICOS ===== */
+.charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #e9edf4;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+}
+
+.chart-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.chart-card h3 i {
+    color: #2d6a9f;
+}
+
+.chart-container {
+    position: relative;
+    height: 250px;
+}
+
+@media (max-width: 1024px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+    .header { flex-direction: column; align-items: stretch; }
+    .project-selector { flex-wrap: wrap; justify-content: center; }
+    .project-selector select { min-width: 100%; }
+    .metrics-grid { grid-template-columns: 1fr 1fr; }
+    .table-header { flex-direction: column; align-items: stretch; }
+    .table-actions { justify-content: flex-start; flex-wrap: wrap; }
+    table { font-size: 12px; }
+    th, td { padding: 10px 12px; }
+}
+
+@media (max-width: 480px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+}
