@@ -689,7 +689,7 @@
             <!-- Generado por JavaScript -->
         </section>
 
-        <!-- ===== GRÁFICO PRINCIPAL: BARRAS AGRUPADAS POR CEGE ===== -->
+        <!-- ===== GRÁFICO PRINCIPAL: BARRAS AGRUPADAS ===== -->
         <div class="chart-main-wrapper">
             <div class="chart-header">
                 <h2><i class="fas fa-chart-bar"></i> Presupuesto vs (Real + Comprometido) por CEGE</h2>
@@ -1081,7 +1081,7 @@
             const grupos = agruparPorCEGE(proyectos);
             const sortedGrupos = grupos.sort((a, b) => b.presupuesto - a.presupuesto);
 
-            // ===== GRÁFICO PRINCIPAL: BARRAS AGRUPADAS (Presupuesto vs Real+Comprometido) =====
+            // ===== GRÁFICO PRINCIPAL: BARRAS AGRUPADAS (CORREGIDO) =====
             const labels = sortedGrupos.map(g => {
                 const nombre = g.nombre.length > 18 ? g.nombre.substring(0, 16) + '…' : g.nombre;
                 return `${g.cege}\n${nombre}`;
@@ -1093,7 +1093,6 @@
 
             const ctx1 = document.getElementById('chartPrincipal').getContext('2d');
 
-            // Configuración para barras agrupadas con espacio entre grupos
             chartPrincipal = new Chart(ctx1, {
                 type: 'bar',
                 data: {
@@ -1105,8 +1104,6 @@
                         borderColor: '#2d6a9f',
                         borderWidth: 2,
                         borderRadius: 4,
-                        // Cada CEGE tendrá 3 barras: Presupuesto, Real, Comprometido
-                        // Usamos un solo dataset por tipo para que queden agrupadas
                     }, {
                         label: 'Real',
                         data: reales,
@@ -1128,7 +1125,7 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false, // Ocultamos la leyenda del gráfico porque la tenemos custom
+                            display: false,
                         },
                         tooltip: {
                             callbacks: {
