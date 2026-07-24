@@ -4,104 +4,707 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Control-Capex</title>
+    
+    <!-- Font Awesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="style.css" />
+    
+    <!-- Chart.js para gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    
+    <!-- Estilos CSS -->
+    <style>
+        /* ===== RESET Y BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7fc;
+            color: #1a1a2e;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f3460;
+        }
+
+        .header h1 i {
+            color: #2d6a9f;
+            margin-right: 10px;
+        }
+
+        /* ===== SELECTOR DE PROYECTOS ===== */
+        .project-selector {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            background: white;
+            padding: 8px 18px 8px 22px;
+            border-radius: 50px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #e2e8f0;
+        }
+
+        .project-selector label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .project-selector select {
+            padding: 8px 36px 8px 16px;
+            border: 1px solid #cbd5e0;
+            border-radius: 30px;
+            font-size: 15px;
+            font-weight: 500;
+            background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5568' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+            appearance: none;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            min-width: 200px;
+        }
+
+        .project-selector select:focus {
+            outline: none;
+            border-color: #2d6a9f;
+            box-shadow: 0 0 0 3px rgba(45, 106, 159, 0.15);
+        }
+
+        .badge-proyectos {
+            background: #e2e8f0;
+            border-radius: 30px;
+            padding: 4px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        /* ===== TARJETAS DE MÉTRICAS ===== */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px 22px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+            border: 1px solid #e9edf4;
+            transition: transform 0.15s, box-shadow 0.2s;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+        }
+
+        .metric-card .label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .metric-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #0f3460;
+        }
+
+        .metric-card .change {
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 6px;
+            display: inline-block;
+        }
+
+        .change.up { color: #38a169; }
+        .change.down { color: #e53e3e; }
+
+        /* ===== GRÁFICOS ===== */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #e9edf4;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        .chart-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chart-card h3 i {
+            color: #2d6a9f;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 250px;
+            width: 100%;
+        }
+
+        /* ===== TABLA ===== */
+        .table-wrapper {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e9edf4;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 18px 24px;
+            border-bottom: 1px solid #edf2f7;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .table-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a202c;
+        }
+
+        .table-header h2 i {
+            color: #2d6a9f;
+            margin-right: 8px;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #2d6a9f;
+            color: white;
+        }
+        .btn-primary:hover { background: #1e4e7a; }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e0;
+            color: #4a5568;
+        }
+        .btn-outline:hover { background: #f7fafc; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: #f9fafb;
+        }
+
+        th {
+            text-align: left;
+            padding: 14px 20px;
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        td {
+            padding: 14px 20px;
+            border-top: 1px solid #edf2f7;
+            color: #2d3748;
+        }
+
+        .estado-badge {
+            display: inline-block;
+            padding: 4px 14px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .estado-completado { background: #c6f6d5; color: #22543d; }
+        .estado-en-progreso { background: #fefcbf; color: #744210; }
+        .estado-pendiente { background: #fed7d7; color: #9b2c2c; }
+
+        .acciones i {
+            margin: 0 4px;
+            color: #718096;
+            cursor: pointer;
+            transition: color 0.2s;
+            font-size: 16px;
+        }
+        .acciones i:hover { color: #2d6a9f; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .header { flex-direction: column; align-items: stretch; }
+            .project-selector { flex-wrap: wrap; justify-content: center; }
+            .project-selector select { min-width: 100%; }
+            .metrics-grid { grid-template-columns: 1fr 1fr; }
+            .table-header { flex-direction: column; align-items: stretch; }
+            .table-actions { justify-content: flex-start; flex-wrap: wrap; }
+            table { font-size: 12px; }
+            th, td { padding: 10px 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .metrics-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <!-- HEADER -->
-        <header class="header">
-            <h1><i class="fas fa-chart-pie"></i> Control-Capex</h1>
-            <div class="project-selector">
-                <label for="proyectoSelect"><i class="fas fa-folder-open"></i> Proyecto:</label>
-                <select id="proyectoSelect">
-                    <option value="global">🌐 Visión Global</option>
-                </select>
-                <span class="badge-proyectos" id="proyectosCount">2 activos</span>
-            </div>
-        </header>
 
-        <!-- MÉTRICAS -->
-        <section class="metrics-grid" id="metricsGrid">
-            <div class="metric-card">
-                <div class="label">Total Inversiones</div>
-                <div class="value" id="totalInversiones">$69.700</div>
-                <span class="change up" id="changeTotal">↑ 12% vs mes anterior</span>
-            </div>
-            <div class="metric-card">
-                <div class="label">Proyectos Activos</div>
-                <div class="value" id="proyectosActivos">2</div>
-                <span class="change up" id="changeProyectos">↑ 3 nuevos</span>
-            </div>
-            <div class="metric-card">
-                <div class="label">Presupuesto Restante</div>
-                <div class="value" id="presupuestoRestante">$1.164.867</div>
-                <span class="change down" id="changePresupuesto">↓ 8% del total</span>
-            </div>
-            <div class="metric-card">
-                <div class="label">Inversiones este mes</div>
-                <div class="value" id="inversionesMes">$89.234</div>
-                <span class="change up" id="changeInversiones">↑ 5% vs mes anterior</span>
-            </div>
-        </section>
+<div class="container">
+    <!-- ===== HEADER ===== -->
+    <header class="header">
+        <h1><i class="fas fa-chart-pie"></i> Control-Capex</h1>
+        <div class="project-selector">
+            <label for="proyectoSelect"><i class="fas fa-folder-open"></i> Proyecto:</label>
+            <select id="proyectoSelect">
+                <option value="global">🌐 Visión Global</option>
+            </select>
+            <span class="badge-proyectos" id="proyectosCount">2 activos</span>
+        </div>
+    </header>
 
-        <!-- GRÁFICOS -->
-        <section class="charts-grid">
-            <div class="chart-card">
-                <h3><i class="fas fa-chart-bar"></i> Inversiones por Categoría</h3>
-                <div class="chart-container">
-                    <canvas id="chartCategorias"></canvas>
-                </div>
-            </div>
-            <div class="chart-card">
-                <h3><i class="fas fa-chart-line"></i> Evolución Mensual</h3>
-                <div class="chart-container">
-                    <canvas id="chartEvolucion"></canvas>
-                </div>
-            </div>
-            <div class="chart-card">
-                <h3><i class="fas fa-chart-doughnut"></i> Distribución por Proyecto</h3>
-                <div class="chart-container">
-                    <canvas id="chartDistribucion"></canvas>
-                </div>
-            </div>
-            <div class="chart-card">
-                <h3><i class="fas fa-chart-pie"></i> Estado de Movimientos</h3>
-                <div class="chart-container">
-                    <canvas id="chartEstados"></canvas>
-                </div>
-            </div>
-        </section>
+    <!-- ===== MÉTRICAS ===== -->
+    <section class="metrics-grid">
+        <div class="metric-card">
+            <div class="label">Total Inversiones</div>
+            <div class="value" id="totalInversiones">$69.700</div>
+            <span class="change up">↑ 12% vs mes anterior</span>
+        </div>
+        <div class="metric-card">
+            <div class="label">Proyectos Activos</div>
+            <div class="value" id="proyectosActivos">2</div>
+            <span class="change up">↑ 3 nuevos</span>
+        </div>
+        <div class="metric-card">
+            <div class="label">Presupuesto Restante</div>
+            <div class="value" id="presupuestoRestante">$1.164.867</div>
+            <span class="change down">↓ 8% del total</span>
+        </div>
+        <div class="metric-card">
+            <div class="label">Inversiones este mes</div>
+            <div class="value" id="inversionesMes">$89.234</div>
+            <span class="change up">↑ 5% vs mes anterior</span>
+        </div>
+    </section>
 
-        <!-- TABLA -->
-        <section class="table-wrapper">
-            <div class="table-header">
-                <h2><i class="fas fa-list-ul"></i> Últimos Movimientos</h2>
-                <div class="table-actions">
-                    <button class="btn btn-outline" id="btnFiltrar"><i class="fas fa-filter"></i> Filtrar</button>
-                    <button class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i> Nuevo</button>
-                </div>
+    <!-- ===== GRÁFICOS ===== -->
+    <section class="charts-grid">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-bar"></i> Inversiones por Categoría</h3>
+            <div class="chart-container">
+                <canvas id="chartCategorias"></canvas>
             </div>
-            <div style="overflow-x:auto;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Concepto</th>
-                            <th>Categoría</th>
-                            <th>Monto</th>
-                            <th>Estado</th>
-                            <th>Proyecto</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tablaBody"></tbody>
-                </table>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line"></i> Evolución Mensual</h3>
+            <div class="chart-container">
+                <canvas id="chartEvolucion"></canvas>
             </div>
-        </section>
-    </div>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-doughnut"></i> Distribución por Proyecto</h3>
+            <div class="chart-container">
+                <canvas id="chartDistribucion"></canvas>
+            </div>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-pie"></i> Estado de Movimientos</h3>
+            <div class="chart-container">
+                <canvas id="chartEstados"></canvas>
+            </div>
+        </div>
+    </section>
 
-    <script src="script.js"></script>
+    <!-- ===== TABLA ===== -->
+    <section class="table-wrapper">
+        <div class="table-header">
+            <h2><i class="fas fa-list-ul"></i> Últimos Movimientos</h2>
+            <div class="table-actions">
+                <button class="btn btn-outline" id="btnFiltrar"><i class="fas fa-filter"></i> Filtrar</button>
+                <button class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i> Nuevo</button>
+            </div>
+        </div>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Concepto</th>
+                        <th>Categoría</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Proyecto</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaBody">
+                    <!-- Los datos se cargan con JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // ============================================================
+    //  DATOS
+    // ============================================================
+    const data = {
+        proyectos: [
+            { id: 'p1', nombre: 'Infraestructura Cloud' },
+            { id: 'p2', nombre: 'Renovación Oficinas' },
+            { id: 'p3', nombre: 'Data Center' },
+        ],
+        movimientos: [
+            { id: 1, fecha: '2026-01-15', concepto: 'Compra de servidores', categoria: 'Infraestructura', monto: 45000, estado: 'Completado', proyectoId: 'p1' },
+            { id: 2, fecha: '2026-01-12', concepto: 'Mobiliario ejecutivo', categoria: 'Equipamiento', monto: 12300, estado: 'En Progreso', proyectoId: 'p2' },
+            { id: 3, fecha: '2026-01-10', concepto: 'Licencias software', categoria: 'Software', monto: 8900, estado: 'Pendiente', proyectoId: 'p1' },
+            { id: 4, fecha: '2026-01-08', concepto: 'Aire acondicionado', categoria: 'Infraestructura', monto: 6700, estado: 'Completado', proyectoId: 'p2' },
+            { id: 5, fecha: '2026-01-05', concepto: 'Servidores backup', categoria: 'Infraestructura', monto: 22400, estado: 'En Progreso', proyectoId: 'p3' },
+            { id: 6, fecha: '2026-01-03', concepto: 'Cables y conectores', categoria: 'Materiales', monto: 3400, estado: 'Completado', proyectoId: 'p1' },
+            { id: 7, fecha: '2025-12-28', concepto: 'Impresoras multifunción', categoria: 'Equipamiento', monto: 5800, estado: 'Completado', proyectoId: 'p2' },
+            { id: 8, fecha: '2025-12-20', concepto: 'Switch de red', categoria: 'Infraestructura', monto: 9200, estado: 'Completado', proyectoId: 'p3' },
+            { id: 9, fecha: '2025-12-15', concepto: 'Monitor 4K', categoria: 'Equipamiento', monto: 3200, estado: 'Completado', proyectoId: 'p1' },
+            { id: 10, fecha: '2025-12-10', concepto: 'Router principal', categoria: 'Infraestructura', monto: 15000, estado: 'En Progreso', proyectoId: 'p3' },
+        ]
+    };
+
+    // ============================================================
+    //  VARIABLES GLOBALES
+    // ============================================================
+    let chartCategorias = null;
+    let chartEvolucion = null;
+    let chartDistribucion = null;
+    let chartEstados = null;
+
+    // ============================================================
+    //  FUNCIONES
+    // ============================================================
+
+    function poblarSelect() {
+        const select = document.getElementById('proyectoSelect');
+        select.innerHTML = `<option value="global">🌐 Visión Global</option>`;
+        data.proyectos.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = p.id;
+            opt.textContent = `📁 ${p.nombre}`;
+            select.appendChild(opt);
+        });
+        document.getElementById('proyectosCount').textContent = `${data.proyectos.length} activos`;
+    }
+
+    function getMovimientosFiltrados(proyectoId) {
+        if (proyectoId === 'global') return data.movimientos;
+        return data.movimientos.filter(m => m.proyectoId === proyectoId);
+    }
+
+    function calcularMetricas(movimientos) {
+        const total = movimientos.reduce((sum, m) => sum + m.monto, 0);
+        const proyectosUnicos = new Set(movimientos.map(m => m.proyectoId));
+        const presupuestoTotal = 1300000;
+        const restante = presupuestoTotal - total;
+        const ahora = new Date();
+        const mesActual = ahora.getMonth();
+        const añoActual = ahora.getFullYear();
+        const inversionesMes = movimientos
+            .filter(m => {
+                const f = new Date(m.fecha);
+                return f.getMonth() === mesActual && f.getFullYear() === añoActual;
+            })
+            .reduce((sum, m) => sum + m.monto, 0);
+
+        return { total, proyectosActivos: proyectosUnicos.size, presupuestoRestante: restante, inversionesMes };
+    }
+
+    // ============================================================
+    //  GRÁFICOS
+    // ============================================================
+
+    function destruirGraficos() {
+        if (chartCategorias) { chartCategorias.destroy(); chartCategorias = null; }
+        if (chartEvolucion) { chartEvolucion.destroy(); chartEvolucion = null; }
+        if (chartDistribucion) { chartDistribucion.destroy(); chartDistribucion = null; }
+        if (chartEstados) { chartEstados.destroy(); chartEstados = null; }
+    }
+
+    function crearGraficos(movimientos) {
+        destruirGraficos();
+
+        // 1. Inversiones por Categoría
+        const categorias = {};
+        movimientos.forEach(m => {
+            categorias[m.categoria] = (categorias[m.categoria] || 0) + m.monto;
+        });
+        const ctx1 = document.getElementById('chartCategorias').getContext('2d');
+        chartCategorias = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(categorias),
+                datasets: [{
+                    label: 'Inversión ($)',
+                    data: Object.values(categorias),
+                    backgroundColor: ['#2d6a9f', '#48bb78', '#ed8936', '#9f7aea', '#fc8181'],
+                    borderRadius: 6,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: v => '$' + v.toLocaleString() }
+                    }
+                }
+            }
+        });
+
+        // 2. Evolución Mensual
+        const meses = {};
+        movimientos.forEach(m => {
+            const mes = m.fecha.substring(0, 7);
+            meses[mes] = (meses[mes] || 0) + m.monto;
+        });
+        const sortedMeses = Object.keys(meses).sort();
+        const ctx2 = document.getElementById('chartEvolucion').getContext('2d');
+        chartEvolucion = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: sortedMeses.map(m => {
+                    const [a, mes] = m.split('-');
+                    return `${mes}/${a}`;
+                }),
+                datasets: [{
+                    label: 'Inversión Mensual',
+                    data: sortedMeses.map(m => meses[m]),
+                    borderColor: '#2d6a9f',
+                    backgroundColor: 'rgba(45, 106, 159, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#2d6a9f',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { callback: v => '$' + v.toLocaleString() }
+                    }
+                }
+            }
+        });
+
+        // 3. Distribución por Proyecto
+        const proyectos = {};
+        movimientos.forEach(m => {
+            const proy = data.proyectos.find(p => p.id === m.proyectoId);
+            const nombre = proy ? proy.nombre : 'Sin asignar';
+            proyectos[nombre] = (proyectos[nombre] || 0) + m.monto;
+        });
+        const colores = ['#2d6a9f', '#48bb78', '#ed8936', '#9f7aea', '#fc8181'];
+        const ctx3 = document.getElementById('chartDistribucion').getContext('2d');
+        chartDistribucion = new Chart(ctx3, {
+            type: 'doughnut',
+            data: {
+                labels: Object.keys(proyectos),
+                datasets: [{
+                    data: Object.values(proyectos),
+                    backgroundColor: colores.slice(0, Object.keys(proyectos).length),
+                    borderWidth: 2,
+                    borderColor: 'white'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 12, usePointStyle: true }
+                    }
+                }
+            }
+        });
+
+        // 4. Estado de Movimientos
+        const estados = {};
+        movimientos.forEach(m => {
+            estados[m.estado] = (estados[m.estado] || 0) + 1;
+        });
+        const ctx4 = document.getElementById('chartEstados').getContext('2d');
+        chartEstados = new Chart(ctx4, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(estados),
+                datasets: [{
+                    data: Object.values(estados),
+                    backgroundColor: ['#48bb78', '#ed8936', '#fc8181'],
+                    borderWidth: 2,
+                    borderColor: 'white'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { padding: 12, usePointStyle: true }
+                    }
+                }
+            }
+        });
+    }
+
+    // ============================================================
+    //  TABLA
+    // ============================================================
+
+    function renderTabla(movimientos) {
+        const tbody = document.getElementById('tablaBody');
+        if (movimientos.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:40px; color:#718096;">
+                <i class="fas fa-inbox" style="font-size:24px; display:block; margin-bottom:8px;"></i>
+                No hay movimientos para este proyecto
+            </td></tr>`;
+            return;
+        }
+
+        tbody.innerHTML = movimientos.map(m => {
+            const proyecto = data.proyectos.find(p => p.id === m.proyectoId);
+            const nombreProyecto = proyecto ? proyecto.nombre : 'Sin asignar';
+            const estadoClass = {
+                'Completado': 'estado-completado',
+                'En Progreso': 'estado-en-progreso',
+                'Pendiente': 'estado-pendiente'
+            } [m.estado] || '';
+
+            return `<tr>
+                <td>${m.fecha}</td>
+                <td><strong>${m.concepto}</strong></td>
+                <td>${m.categoria}</td>
+                <td>$${m.monto.toLocaleString()}</td>
+                <td><span class="estado-badge ${estadoClass}">${m.estado}</span></td>
+                <td><span style="font-size:13px; color:#4a5568;">${nombreProyecto}</span></td>
+                <td class="acciones">
+                    <i class="fas fa-edit" title="Editar"></i>
+                    <i class="fas fa-trash-alt" title="Eliminar" style="color:#e53e3e;"></i>
+                </td>
+            </tr>`;
+        }).join('');
+    }
+
+    // ============================================================
+    //  ACTUALIZAR DASHBOARD
+    // ============================================================
+
+    function actualizarDashboard(proyectoId) {
+        const movs = getMovimientosFiltrados(proyectoId);
+        const metricas = calcularMetricas(movs);
+
+        document.getElementById('totalInversiones').textContent = `$${metricas.total.toLocaleString()}`;
+        document.getElementById('proyectosActivos').textContent = metricas.proyectosActivos;
+        document.getElementById('presupuestoRestante').textContent = `$${metricas.presupuestoRestante.toLocaleString()}`;
+        document.getElementById('inversionesMes').textContent = `$${metricas.inversionesMes.toLocaleString()}`;
+
+        renderTabla(movs);
+        crearGraficos(movs);
+    }
+
+    // ============================================================
+    //  EVENTOS
+    // ============================================================
+
+    document.addEventListener('DOMContentLoaded', () => {
+        poblarSelect();
+
+        const select = document.getElementById('proyectoSelect');
+        select.addEventListener('change', (e) => {
+            actualizarDashboard(e.target.value);
+        });
+
+        document.getElementById('btnNuevo').addEventListener('click', () => {
+            alert('🆕 Abrir formulario para nuevo movimiento');
+        });
+
+        document.getElementById('btnFiltrar').addEventListener('click', () => {
+            alert('🔍 Abrir panel de filtros avanzados');
+        });
+
+        actualizarDashboard('global');
+    });
+</script>
+
 </body>
 </html>
+
+ 
