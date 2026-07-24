@@ -615,24 +615,26 @@
         /* ===== LEYENDA DEL GRÁFICO ===== */
         .legend-container {
             display: flex;
-            gap: 20px;
+            gap: 24px;
             flex-wrap: wrap;
             font-size: 13px;
-            margin-top: 12px;
+            margin-top: 16px;
             justify-content: center;
+            padding-top: 12px;
+            border-top: 1px solid #edf2f7;
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
 
         .legend-color {
-            width: 18px;
-            height: 18px;
+            width: 20px;
+            height: 20px;
             border-radius: 4px;
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.08);
         }
     </style>
 </head>
@@ -687,7 +689,7 @@
             <!-- Generado por JavaScript -->
         </section>
 
-        <!-- ===== GRÁFICO PRINCIPAL: BARRAS POR CEGE ===== -->
+        <!-- ===== GRÁFICO PRINCIPAL: BARRAS AGRUPADAS POR CEGE ===== -->
         <div class="chart-main-wrapper">
             <div class="chart-header">
                 <h2><i class="fas fa-chart-bar"></i> Presupuesto vs (Real + Comprometido) por CEGE</h2>
@@ -983,7 +985,6 @@
                 const pctDisponible = g.presupuesto > 0 ? (g.disponible / g.presupuesto * 100) : 0;
                 const pctEjecutado = g.presupuesto > 0 ? (ejecutado / g.presupuesto * 100) : 0;
 
-                // Calcular el porcentaje de la barra (máximo 100%)
                 const barraReal = Math.min(pctReal, 100);
                 const barraComprometido = Math.min(pctComprometido, 100 - barraReal);
                 const barraDisponible = Math.min(pctDisponible, 100 - barraReal - barraComprometido);
@@ -1080,16 +1081,19 @@
             const grupos = agruparPorCEGE(proyectos);
             const sortedGrupos = grupos.sort((a, b) => b.presupuesto - a.presupuesto);
 
-            // ===== GRÁFICO PRINCIPAL: Barras por CEGE =====
+            // ===== GRÁFICO PRINCIPAL: BARRAS AGRUPADAS (Presupuesto vs Real+Comprometido) =====
             const labels = sortedGrupos.map(g => {
                 const nombre = g.nombre.length > 18 ? g.nombre.substring(0, 16) + '…' : g.nombre;
                 return `${g.cege}\n${nombre}`;
             });
+
             const presupuestos = sortedGrupos.map(g => g.presupuesto);
             const reales = sortedGrupos.map(g => g.real);
             const comprometidos = sortedGrupos.map(g => g.comprometido);
 
             const ctx1 = document.getElementById('chartPrincipal').getContext('2d');
+
+            // Configuración para barras agrupadas con espacio entre grupos
             chartPrincipal = new Chart(ctx1, {
                 type: 'bar',
                 data: {
@@ -1097,27 +1101,26 @@
                     datasets: [{
                         label: 'Presupuesto',
                         data: presupuestos,
-                        backgroundColor: 'rgba(45, 106, 159, 0.8)',
+                        backgroundColor: 'rgba(45, 106, 159, 0.85)',
                         borderColor: '#2d6a9f',
                         borderWidth: 2,
                         borderRadius: 4,
-                        order: 2,
+                        // Cada CEGE tendrá 3 barras: Presupuesto, Real, Comprometido
+                        // Usamos un solo dataset por tipo para que queden agrupadas
                     }, {
                         label: 'Real',
                         data: reales,
-                        backgroundColor: 'rgba(56, 161, 105, 0.8)',
+                        backgroundColor: 'rgba(56, 161, 105, 0.85)',
                         borderColor: '#38a169',
                         borderWidth: 2,
                         borderRadius: 4,
-                        order: 1,
                     }, {
                         label: 'Comprometido',
                         data: comprometidos,
-                        backgroundColor: 'rgba(237, 137, 54, 0.8)',
+                        backgroundColor: 'rgba(237, 137, 54, 0.85)',
                         borderColor: '#ed8936',
                         borderWidth: 2,
                         borderRadius: 4,
-                        order: 0,
                     }]
                 },
                 options: {
@@ -1125,7 +1128,7 @@
                     maintainAspectRatio: false,
                     plugins: {
                         legend: {
-                            display: false,
+                            display: false, // Ocultamos la leyenda del gráfico porque la tenemos custom
                         },
                         tooltip: {
                             callbacks: {
