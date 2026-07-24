@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Control-Capex</title>
-    
-    <!-- Font Awesome para iconos -->
+    <title>Control-Capex - Proyectos por CEGE</title>
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    
-    <!-- Chart.js para gráficos -->
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
-    <!-- Estilos CSS -->
+
     <style>
         /* ===== RESET Y BASE ===== */
         * {
@@ -22,13 +21,13 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f4f7fc;
+            background: #f0f4f8;
             color: #1a1a2e;
             padding: 24px;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
         }
 
@@ -37,80 +36,104 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
             flex-wrap: wrap;
             gap: 16px;
+            background: white;
+            padding: 20px 28px;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border: 1px solid #e9edf4;
         }
 
-        .header h1 {
-            font-size: 28px;
+        .header-left h1 {
+            font-size: 26px;
             font-weight: 700;
             color: #0f3460;
         }
 
-        .header h1 i {
+        .header-left h1 i {
             color: #2d6a9f;
             margin-right: 10px;
         }
 
-        /* ===== SELECTOR DE PROYECTOS ===== */
-        .project-selector {
+        .header-left .subtitle {
+            font-size: 14px;
+            color: #718096;
+            margin-top: 2px;
+        }
+
+        .header-right {
             display: flex;
             align-items: center;
-            gap: 14px;
-            background: white;
-            padding: 8px 18px 8px 22px;
-            border-radius: 50px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* ===== FILTROS ===== */
+        .filters {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f7fafc;
+            padding: 4px 12px 4px 16px;
+            border-radius: 30px;
             border: 1px solid #e2e8f0;
         }
 
-        .project-selector label {
+        .filter-group label {
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             color: #4a5568;
         }
 
-        .project-selector select {
-            padding: 8px 36px 8px 16px;
-            border: 1px solid #cbd5e0;
-            border-radius: 30px;
-            font-size: 15px;
+        .filter-group select {
+            padding: 6px 30px 6px 12px;
+            border: none;
+            background: transparent;
+            font-size: 14px;
             font-weight: 500;
-            background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5568' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 14px center;
-            appearance: none;
+            color: #2d3748;
             cursor: pointer;
-            transition: border-color 0.2s;
-            min-width: 200px;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234a5568' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            min-width: 140px;
         }
 
-        .project-selector select:focus {
+        .filter-group select:focus {
             outline: none;
-            border-color: #2d6a9f;
-            box-shadow: 0 0 0 3px rgba(45, 106, 159, 0.15);
         }
 
-        .badge-proyectos {
-            background: #e2e8f0;
+        .badge-total {
+            background: #2d6a9f;
+            color: white;
             border-radius: 30px;
             padding: 4px 14px;
             font-size: 13px;
             font-weight: 600;
-            color: #2d3748;
         }
 
         /* ===== TARJETAS DE MÉTRICAS ===== */
         .metrics-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: 20px;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
 
         .metric-card {
             background: white;
             border-radius: 16px;
-            padding: 20px 22px;
+            padding: 20px 24px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.04);
             border: 1px solid #e9edf4;
             transition: transform 0.15s, box-shadow 0.2s;
@@ -122,16 +145,29 @@
         }
 
         .metric-card .label {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 500;
             color: #718096;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .metric-card .label i {
+            margin-right: 6px;
+            color: #2d6a9f;
         }
 
         .metric-card .value {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             color: #0f3460;
+        }
+
+        .metric-card .sub {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 4px;
         }
 
         .metric-card .change {
@@ -141,27 +177,31 @@
             display: inline-block;
         }
 
-        .change.up { color: #38a169; }
-        .change.down { color: #e53e3e; }
+        .change.up {
+            color: #38a169;
+        }
+        .change.down {
+            color: #e53e3e;
+        }
 
         /* ===== GRÁFICOS ===== */
         .charts-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
 
         .chart-card {
             background: white;
             border-radius: 16px;
-            padding: 20px;
+            padding: 20px 24px;
             border: 1px solid #e9edf4;
             box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         }
 
         .chart-card h3 {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             color: #2d3748;
             margin-bottom: 16px;
@@ -193,14 +233,14 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 18px 24px;
+            padding: 16px 24px;
             border-bottom: 1px solid #edf2f7;
             flex-wrap: wrap;
             gap: 12px;
         }
 
         .table-header h2 {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
             color: #1a202c;
         }
@@ -214,10 +254,11 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap;
         }
 
         .btn {
-            padding: 8px 18px;
+            padding: 7px 16px;
             border-radius: 30px;
             border: none;
             font-weight: 600;
@@ -233,19 +274,31 @@
             background: #2d6a9f;
             color: white;
         }
-        .btn-primary:hover { background: #1e4e7a; }
+        .btn-primary:hover {
+            background: #1e4e7a;
+        }
 
         .btn-outline {
             background: transparent;
             border: 1px solid #cbd5e0;
             color: #4a5568;
         }
-        .btn-outline:hover { background: #f7fafc; }
+        .btn-outline:hover {
+            background: #f7fafc;
+        }
+
+        .btn-success {
+            background: #38a169;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #2f855a;
+        }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 14px;
+            font-size: 13px;
         }
 
         thead {
@@ -254,40 +307,98 @@
 
         th {
             text-align: left;
-            padding: 14px 20px;
+            padding: 12px 16px;
             font-weight: 600;
             color: #4a5568;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.4px;
         }
 
         td {
-            padding: 14px 20px;
+            padding: 12px 16px;
             border-top: 1px solid #edf2f7;
             color: #2d3748;
         }
 
-        .estado-badge {
-            display: inline-block;
-            padding: 4px 14px;
-            border-radius: 30px;
+        .text-muted {
+            color: #a0aec0;
             font-size: 12px;
+        }
+
+        .badge-cege {
+            background: #ebf4ff;
+            color: #2d6a9f;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .badge-pospre {
+            background: #f0fff4;
+            color: #276749;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            font-family: monospace;
+        }
+
+        .badge-estado {
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 11px;
             font-weight: 600;
         }
 
-        .estado-completado { background: #c6f6d5; color: #22543d; }
-        .estado-en-progreso { background: #fefcbf; color: #744210; }
-        .estado-pendiente { background: #fed7d7; color: #9b2c2c; }
-
-        .acciones i {
-            margin: 0 4px;
-            color: #718096;
-            cursor: pointer;
-            transition: color 0.2s;
-            font-size: 16px;
+        .badge-vigente {
+            background: #c6f6d5;
+            color: #22543d;
         }
-        .acciones i:hover { color: #2d6a9f; }
+
+        .badge-no-vigente {
+            background: #fed7d7;
+            color: #9b2c2c;
+        }
+
+        .monto {
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+
+        .monto-real {
+            color: #2d6a9f;
+        }
+        .monto-comprometido {
+            color: #ed8936;
+        }
+        .monto-disponible {
+            color: #38a169;
+        }
+
+        .barra-progreso {
+            width: 100%;
+            height: 6px;
+            background: #edf2f7;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .barra-progreso .fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s;
+        }
+
+        .fill-real {
+            background: #2d6a9f;
+        }
+        .fill-comprometido {
+            background: #ed8936;
+        }
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1024px) {
@@ -296,415 +407,650 @@
             }
         }
 
-        @media (max-width: 700px) {
-            .header { flex-direction: column; align-items: stretch; }
-            .project-selector { flex-wrap: wrap; justify-content: center; }
-            .project-selector select { min-width: 100%; }
-            .metrics-grid { grid-template-columns: 1fr 1fr; }
-            .table-header { flex-direction: column; align-items: stretch; }
-            .table-actions { justify-content: flex-start; flex-wrap: wrap; }
-            table { font-size: 12px; }
-            th, td { padding: 10px 12px; }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-right {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .filter-group {
+                justify-content: space-between;
+            }
+            .filter-group select {
+                min-width: 100px;
+            }
+            .metrics-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .table-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .table-actions {
+                justify-content: flex-start;
+            }
+            table {
+                font-size: 11px;
+            }
+            th,
+            td {
+                padding: 8px 10px;
+            }
         }
 
         @media (max-width: 480px) {
-            .metrics-grid { grid-template-columns: 1fr; }
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- ===== HEADER ===== -->
-    <header class="header">
-        <h1><i class="fas fa-chart-pie"></i> Control-Capex</h1>
-        <div class="project-selector">
-            <label for="proyectoSelect"><i class="fas fa-folder-open"></i> Proyecto:</label>
-            <select id="proyectoSelect">
-                <option value="global">🌐 Visión Global</option>
-            </select>
-            <span class="badge-proyectos" id="proyectosCount">2 activos</span>
-        </div>
-    </header>
-
-    <!-- ===== MÉTRICAS ===== -->
-    <section class="metrics-grid">
-        <div class="metric-card">
-            <div class="label">Total Inversiones</div>
-            <div class="value" id="totalInversiones">$69.700</div>
-            <span class="change up">↑ 12% vs mes anterior</span>
-        </div>
-        <div class="metric-card">
-            <div class="label">Proyectos Activos</div>
-            <div class="value" id="proyectosActivos">2</div>
-            <span class="change up">↑ 3 nuevos</span>
-        </div>
-        <div class="metric-card">
-            <div class="label">Presupuesto Restante</div>
-            <div class="value" id="presupuestoRestante">$1.164.867</div>
-            <span class="change down">↓ 8% del total</span>
-        </div>
-        <div class="metric-card">
-            <div class="label">Inversiones este mes</div>
-            <div class="value" id="inversionesMes">$89.234</div>
-            <span class="change up">↑ 5% vs mes anterior</span>
-        </div>
-    </section>
-
-    <!-- ===== GRÁFICOS ===== -->
-    <section class="charts-grid">
-        <div class="chart-card">
-            <h3><i class="fas fa-chart-bar"></i> Inversiones por Categoría</h3>
-            <div class="chart-container">
-                <canvas id="chartCategorias"></canvas>
+    <div class="container">
+        <!-- ===== HEADER ===== -->
+        <header class="header">
+            <div class="header-left">
+                <h1><i class="fas fa-building"></i> Control-Capex</h1>
+                <div class="subtitle">Gestión de proyectos por CEGE y POSPRE</div>
             </div>
-        </div>
-        <div class="chart-card">
-            <h3><i class="fas fa-chart-line"></i> Evolución Mensual</h3>
-            <div class="chart-container">
-                <canvas id="chartEvolucion"></canvas>
+            <div class="header-right">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label><i class="fas fa-filter"></i> CEGE:</label>
+                        <select id="filtroCEGE">
+                            <option value="todos">🌐 Todos los CEGE</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label><i class="fas fa-tag"></i> Estado:</label>
+                        <select id="filtroEstado">
+                            <option value="todos">📋 Todos</option>
+                            <option value="vigente">✅ Vigentes</option>
+                            <option value="no-vigente">❌ No Vigentes</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="badge-total" id="totalProyectos">0 proyectos</span>
             </div>
-        </div>
-        <div class="chart-card">
-            <h3><i class="fas fa-chart-doughnut"></i> Distribución por Proyecto</h3>
-            <div class="chart-container">
-                <canvas id="chartDistribucion"></canvas>
+        </header>
+
+        <!-- ===== MÉTRICAS ===== -->
+        <section class="metrics-grid" id="metricsGrid">
+            <div class="metric-card">
+                <div class="label"><i class="fas fa-coins"></i> Presupuesto Total</div>
+                <div class="value" id="totalPresupuesto">$0</div>
+                <div class="sub" id="subPresupuesto">0 proyectos</div>
             </div>
-        </div>
-        <div class="chart-card">
-            <h3><i class="fas fa-chart-pie"></i> Estado de Movimientos</h3>
-            <div class="chart-container">
-                <canvas id="chartEstados"></canvas>
+            <div class="metric-card">
+                <div class="label"><i class="fas fa-check-circle"></i> Real Ejecutado</div>
+                <div class="value" id="totalReal">$0</div>
+                <div class="change up" id="changeReal">0% ejecutado</div>
             </div>
-        </div>
-    </section>
-
-    <!-- ===== TABLA ===== -->
-    <section class="table-wrapper">
-        <div class="table-header">
-            <h2><i class="fas fa-list-ul"></i> Últimos Movimientos</h2>
-            <div class="table-actions">
-                <button class="btn btn-outline" id="btnFiltrar"><i class="fas fa-filter"></i> Filtrar</button>
-                <button class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i> Nuevo</button>
+            <div class="metric-card">
+                <div class="label"><i class="fas fa-clock"></i> Comprometido</div>
+                <div class="value" id="totalComprometido">$0</div>
+                <div class="change down" id="changeComprometido">0% comprometido</div>
             </div>
-        </div>
-        <div style="overflow-x:auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Concepto</th>
-                        <th>Categoría</th>
-                        <th>Monto</th>
-                        <th>Estado</th>
-                        <th>Proyecto</th>
-                        <th>Acciones</th>
-                    </tr>
-                </thead>
-                <tbody id="tablaBody">
-                    <!-- Los datos se cargan con JavaScript -->
-                </tbody>
-            </table>
-        </div>
-    </section>
-</div>
+            <div class="metric-card">
+                <div class="label"><i class="fas fa-hand-holding-usd"></i> Disponible</div>
+                <div class="value" id="totalDisponible">$0</div>
+                <div class="sub" id="subDisponible">0% disponible</div>
+            </div>
+        </section>
 
-<!-- ===== JAVASCRIPT ===== -->
-<script>
-    // ============================================================
-    //  DATOS
-    // ============================================================
-    const data = {
-        proyectos: [
-            { id: 'p1', nombre: 'Infraestructura Cloud' },
-            { id: 'p2', nombre: 'Renovación Oficinas' },
-            { id: 'p3', nombre: 'Data Center' },
-        ],
-        movimientos: [
-            { id: 1, fecha: '2026-01-15', concepto: 'Compra de servidores', categoria: 'Infraestructura', monto: 45000, estado: 'Completado', proyectoId: 'p1' },
-            { id: 2, fecha: '2026-01-12', concepto: 'Mobiliario ejecutivo', categoria: 'Equipamiento', monto: 12300, estado: 'En Progreso', proyectoId: 'p2' },
-            { id: 3, fecha: '2026-01-10', concepto: 'Licencias software', categoria: 'Software', monto: 8900, estado: 'Pendiente', proyectoId: 'p1' },
-            { id: 4, fecha: '2026-01-08', concepto: 'Aire acondicionado', categoria: 'Infraestructura', monto: 6700, estado: 'Completado', proyectoId: 'p2' },
-            { id: 5, fecha: '2026-01-05', concepto: 'Servidores backup', categoria: 'Infraestructura', monto: 22400, estado: 'En Progreso', proyectoId: 'p3' },
-            { id: 6, fecha: '2026-01-03', concepto: 'Cables y conectores', categoria: 'Materiales', monto: 3400, estado: 'Completado', proyectoId: 'p1' },
-            { id: 7, fecha: '2025-12-28', concepto: 'Impresoras multifunción', categoria: 'Equipamiento', monto: 5800, estado: 'Completado', proyectoId: 'p2' },
-            { id: 8, fecha: '2025-12-20', concepto: 'Switch de red', categoria: 'Infraestructura', monto: 9200, estado: 'Completado', proyectoId: 'p3' },
-            { id: 9, fecha: '2025-12-15', concepto: 'Monitor 4K', categoria: 'Equipamiento', monto: 3200, estado: 'Completado', proyectoId: 'p1' },
-            { id: 10, fecha: '2025-12-10', concepto: 'Router principal', categoria: 'Infraestructura', monto: 15000, estado: 'En Progreso', proyectoId: 'p3' },
-        ]
-    };
+        <!-- ===== GRÁFICOS ===== -->
+        <section class="charts-grid">
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-bar"></i> Presupuesto vs Real vs Comprometido</h3>
+                <div class="chart-container">
+                    <canvas id="chartComparativo"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-pie"></i> Distribución por CEGE</h3>
+                <div class="chart-container">
+                    <canvas id="chartDistribucion"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-doughnut"></i> Estado de Proyectos</h3>
+                <div class="chart-container">
+                    <canvas id="chartEstado"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3><i class="fas fa-chart-line"></i> Ejecución por POSPRE</h3>
+                <div class="chart-container">
+                    <canvas id="chartEjecucion"></canvas>
+                </div>
+            </div>
+        </section>
 
-    // ============================================================
-    //  VARIABLES GLOBALES
-    // ============================================================
-    let chartCategorias = null;
-    let chartEvolucion = null;
-    let chartDistribucion = null;
-    let chartEstados = null;
+        <!-- ===== TABLA ===== -->
+        <section class="table-wrapper">
+            <div class="table-header">
+                <h2><i class="fas fa-list-ul"></i> Detalle de Proyectos</h2>
+                <div class="table-actions">
+                    <button class="btn btn-outline" id="btnExportar"><i class="fas fa-file-export"></i> Exportar</button>
+                    <button class="btn btn-primary" id="btnNuevo"><i class="fas fa-plus"></i> Nuevo Proyecto</button>
+                </div>
+            </div>
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Proyecto</th>
+                            <th>CEGE</th>
+                            <th>POSPRE</th>
+                            <th>Presupuesto</th>
+                            <th>Real</th>
+                            <th>Comprometido</th>
+                            <th>Disponible</th>
+                            <th>Ejecución</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaBody">
+                        <!-- Datos cargados con JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
 
-    // ============================================================
-    //  FUNCIONES
-    // ============================================================
+    <script>
+        // ============================================================
+        //  DATOS - Adaptados a tu estructura
+        // ============================================================
+        const data = {
+            proyectos: [{
+                id: 1,
+                nombre: '200 Sitios 2026',
+                cege: '0209A0Z861',
+                pospre: 'CL-RM-IM-ISN',
+                presupuesto: 1388583103,
+                real: 0,
+                comprometido: 0,
+                disponible: 0,
+                vigente: true
+            }, {
+                id: 2,
+                nombre: '201 Sitios 2026',
+                cege: '0209A0Z861',
+                pospre: 'CL-RM-TR-FAC',
+                presupuesto: 1228592153,
+                real: 0,
+                comprometido: 0,
+                disponible: 0,
+                vigente: true
+            }, {
+                id: 3,
+                nombre: '202 Sitios 2026',
+                cege: '0209A0Z861',
+                pospre: 'CL-RM-TR-IPA',
+                presupuesto: 755163906,
+                real: 0,
+                comprometido: 0,
+                disponible: 0,
+                vigente: true
+            }, {
+                id: 4,
+                nombre: '203 Sitios 2026',
+                cege: '0209A0Z861',
+                pospre: 'CL-RM-TR-MAC',
+                presupuesto: 561038593,
+                real: 0,
+                comprometido: 0,
+                disponible: 0,
+                vigente: true
+            }, {
+                id: 5,
+                nombre: 'Sitios Nuevos 2026',
+                cege: '0209A0Z777',
+                pospre: 'CL-RM-EX-ELT E',
+                presupuesto: 1951970577,
+                real: 16404917,
+                comprometido: 1792233445,
+                disponible: 143332215,
+                vigente: true
+            }, {
+                id: 6,
+                nombre: 'Sitios Nuevos 2026',
+                cege: '0209A0Z777',
+                pospre: 'CL-RM-IM-ISN S',
+                presupuesto: 125673700,
+                real: 0,
+                comprometido: 93908634,
+                disponible: 31765066,
+                vigente: true
+            }, {
+                id: 7,
+                nombre: 'Sitios Nuevos 2026',
+                cege: '0209A0Z777',
+                pospre: 'CL-RM-SN-COC',
+                presupuesto: 828839456,
+                real: 135302113,
+                comprometido: 468121801,
+                disponible: 225415542,
+                vigente: true
+            }, {
+                id: 8,
+                nombre: 'Sitios Nuevos 2026',
+                cege: '0209A0Z777',
+                pospre: 'CL-RM-TR-FAC F',
+                presupuesto: 1076945572,
+                real: 318984587,
+                comprometido: 639717226,
+                disponible: 118243759,
+                vigente: true
+            }, {
+                id: 9,
+                nombre: 'Sitios Nuevos 2026',
+                cege: '0209A0Z777',
+                pospre: 'CL-RM-TR-IPA IP',
+                presupuesto: 802250329,
+                real: 3651384,
+                comprometido: 381419567,
+                disponible: 417179378,
+                vigente: true
+            }, {
+                id: 10,
+                nombre: 'Sitios Nuevos 2026',
+                cege: '0209A0Z777',
+                pospre: 'CL-RM-TR-MAC',
+                presupuesto: 555175751,
+                real: 101854916,
+                comprometido: 362718957,
+                disponible: 90601878,
+                vigente: true
+            }, {
+                id: 11,
+                nombre: 'Sitios Nuevos 2026',
+                cege: '0209A0Z777',
+                pospre: 'CL-RM-TR-OTX C',
+                presupuesto: 824702569,
+                real: 0,
+                comprometido: 823193137,
+                disponible: 1509432,
+                vigente: true
+            }, {
+                id: 12,
+                nombre: 'Sitios Antiguos 2025',
+                cege: '0209A0Z999',
+                pospre: 'CL-RM-LEG-OLD',
+                presupuesto: 500000000,
+                real: 450000000,
+                comprometido: 50000000,
+                disponible: 0,
+                vigente: false
+            }, {
+                id: 13,
+                nombre: 'Sitios Antiguos 2025',
+                cege: '0209A0Z999',
+                pospre: 'CL-RM-LEG-OLD2',
+                presupuesto: 300000000,
+                real: 280000000,
+                comprometido: 20000000,
+                disponible: 0,
+                vigente: false
+            }]
+        };
 
-    function poblarSelect() {
-        const select = document.getElementById('proyectoSelect');
-        select.innerHTML = `<option value="global">🌐 Visión Global</option>`;
-        data.proyectos.forEach(p => {
-            const opt = document.createElement('option');
-            opt.value = p.id;
-            opt.textContent = `📁 ${p.nombre}`;
-            select.appendChild(opt);
-        });
-        document.getElementById('proyectosCount').textContent = `${data.proyectos.length} activos`;
-    }
+        // ============================================================
+        //  VARIABLES GLOBALES
+        // ============================================================
+        let chartComparativo = null;
+        let chartDistribucion = null;
+        let chartEstado = null;
+        let chartEjecucion = null;
 
-    function getMovimientosFiltrados(proyectoId) {
-        if (proyectoId === 'global') return data.movimientos;
-        return data.movimientos.filter(m => m.proyectoId === proyectoId);
-    }
+        // ============================================================
+        //  FUNCIONES DE FILTRO
+        // ============================================================
 
-    function calcularMetricas(movimientos) {
-        const total = movimientos.reduce((sum, m) => sum + m.monto, 0);
-        const proyectosUnicos = new Set(movimientos.map(m => m.proyectoId));
-        const presupuestoTotal = 1300000;
-        const restante = presupuestoTotal - total;
-        const ahora = new Date();
-        const mesActual = ahora.getMonth();
-        const añoActual = ahora.getFullYear();
-        const inversionesMes = movimientos
-            .filter(m => {
-                const f = new Date(m.fecha);
-                return f.getMonth() === mesActual && f.getFullYear() === añoActual;
-            })
-            .reduce((sum, m) => sum + m.monto, 0);
-
-        return { total, proyectosActivos: proyectosUnicos.size, presupuestoRestante: restante, inversionesMes };
-    }
-
-    // ============================================================
-    //  GRÁFICOS
-    // ============================================================
-
-    function destruirGraficos() {
-        if (chartCategorias) { chartCategorias.destroy(); chartCategorias = null; }
-        if (chartEvolucion) { chartEvolucion.destroy(); chartEvolucion = null; }
-        if (chartDistribucion) { chartDistribucion.destroy(); chartDistribucion = null; }
-        if (chartEstados) { chartEstados.destroy(); chartEstados = null; }
-    }
-
-    function crearGraficos(movimientos) {
-        destruirGraficos();
-
-        // 1. Inversiones por Categoría
-        const categorias = {};
-        movimientos.forEach(m => {
-            categorias[m.categoria] = (categorias[m.categoria] || 0) + m.monto;
-        });
-        const ctx1 = document.getElementById('chartCategorias').getContext('2d');
-        chartCategorias = new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: Object.keys(categorias),
-                datasets: [{
-                    label: 'Inversión ($)',
-                    data: Object.values(categorias),
-                    backgroundColor: ['#2d6a9f', '#48bb78', '#ed8936', '#9f7aea', '#fc8181'],
-                    borderRadius: 6,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { callback: v => '$' + v.toLocaleString() }
-                    }
-                }
-            }
-        });
-
-        // 2. Evolución Mensual
-        const meses = {};
-        movimientos.forEach(m => {
-            const mes = m.fecha.substring(0, 7);
-            meses[mes] = (meses[mes] || 0) + m.monto;
-        });
-        const sortedMeses = Object.keys(meses).sort();
-        const ctx2 = document.getElementById('chartEvolucion').getContext('2d');
-        chartEvolucion = new Chart(ctx2, {
-            type: 'line',
-            data: {
-                labels: sortedMeses.map(m => {
-                    const [a, mes] = m.split('-');
-                    return `${mes}/${a}`;
-                }),
-                datasets: [{
-                    label: 'Inversión Mensual',
-                    data: sortedMeses.map(m => meses[m]),
-                    borderColor: '#2d6a9f',
-                    backgroundColor: 'rgba(45, 106, 159, 0.1)',
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: '#2d6a9f',
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { callback: v => '$' + v.toLocaleString() }
-                    }
-                }
-            }
-        });
-
-        // 3. Distribución por Proyecto
-        const proyectos = {};
-        movimientos.forEach(m => {
-            const proy = data.proyectos.find(p => p.id === m.proyectoId);
-            const nombre = proy ? proy.nombre : 'Sin asignar';
-            proyectos[nombre] = (proyectos[nombre] || 0) + m.monto;
-        });
-        const colores = ['#2d6a9f', '#48bb78', '#ed8936', '#9f7aea', '#fc8181'];
-        const ctx3 = document.getElementById('chartDistribucion').getContext('2d');
-        chartDistribucion = new Chart(ctx3, {
-            type: 'doughnut',
-            data: {
-                labels: Object.keys(proyectos),
-                datasets: [{
-                    data: Object.values(proyectos),
-                    backgroundColor: colores.slice(0, Object.keys(proyectos).length),
-                    borderWidth: 2,
-                    borderColor: 'white'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { padding: 12, usePointStyle: true }
-                    }
-                }
-            }
-        });
-
-        // 4. Estado de Movimientos
-        const estados = {};
-        movimientos.forEach(m => {
-            estados[m.estado] = (estados[m.estado] || 0) + 1;
-        });
-        const ctx4 = document.getElementById('chartEstados').getContext('2d');
-        chartEstados = new Chart(ctx4, {
-            type: 'pie',
-            data: {
-                labels: Object.keys(estados),
-                datasets: [{
-                    data: Object.values(estados),
-                    backgroundColor: ['#48bb78', '#ed8936', '#fc8181'],
-                    borderWidth: 2,
-                    borderColor: 'white'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { padding: 12, usePointStyle: true }
-                    }
-                }
-            }
-        });
-    }
-
-    // ============================================================
-    //  TABLA
-    // ============================================================
-
-    function renderTabla(movimientos) {
-        const tbody = document.getElementById('tablaBody');
-        if (movimientos.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:40px; color:#718096;">
-                <i class="fas fa-inbox" style="font-size:24px; display:block; margin-bottom:8px;"></i>
-                No hay movimientos para este proyecto
-            </td></tr>`;
-            return;
+        function getCEGEs() {
+            const cegeSet = new Set(data.proyectos.map(p => p.cege));
+            return Array.from(cegeSet).sort();
         }
 
-        tbody.innerHTML = movimientos.map(m => {
-            const proyecto = data.proyectos.find(p => p.id === m.proyectoId);
-            const nombreProyecto = proyecto ? proyecto.nombre : 'Sin asignar';
-            const estadoClass = {
-                'Completado': 'estado-completado',
-                'En Progreso': 'estado-en-progreso',
-                'Pendiente': 'estado-pendiente'
-            } [m.estado] || '';
+        function getProyectosFiltrados(cege, estado) {
+            let filtrados = data.proyectos;
 
-            return `<tr>
-                <td>${m.fecha}</td>
-                <td><strong>${m.concepto}</strong></td>
-                <td>${m.categoria}</td>
-                <td>$${m.monto.toLocaleString()}</td>
-                <td><span class="estado-badge ${estadoClass}">${m.estado}</span></td>
-                <td><span style="font-size:13px; color:#4a5568;">${nombreProyecto}</span></td>
-                <td class="acciones">
-                    <i class="fas fa-edit" title="Editar"></i>
-                    <i class="fas fa-trash-alt" title="Eliminar" style="color:#e53e3e;"></i>
-                </td>
-            </tr>`;
-        }).join('');
-    }
+            if (cege !== 'todos') {
+                filtrados = filtrados.filter(p => p.cege === cege);
+            }
 
-    // ============================================================
-    //  ACTUALIZAR DASHBOARD
-    // ============================================================
+            if (estado === 'vigente') {
+                filtrados = filtrados.filter(p => p.vigente === true);
+            } else if (estado === 'no-vigente') {
+                filtrados = filtrados.filter(p => p.vigente === false);
+            }
 
-    function actualizarDashboard(proyectoId) {
-        const movs = getMovimientosFiltrados(proyectoId);
-        const metricas = calcularMetricas(movs);
+            return filtrados;
+        }
 
-        document.getElementById('totalInversiones').textContent = `$${metricas.total.toLocaleString()}`;
-        document.getElementById('proyectosActivos').textContent = metricas.proyectosActivos;
-        document.getElementById('presupuestoRestante').textContent = `$${metricas.presupuestoRestante.toLocaleString()}`;
-        document.getElementById('inversionesMes').textContent = `$${metricas.inversionesMes.toLocaleString()}`;
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('es-CL', {
+                style: 'currency',
+                currency: 'CLP',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
 
-        renderTabla(movs);
-        crearGraficos(movs);
-    }
+        function formatCurrencyShort(value) {
+            if (value >= 1000000000) {
+                return '$' + (value / 1000000000).toFixed(1) + 'B';
+            } else if (value >= 1000000) {
+                return '$' + (value / 1000000).toFixed(1) + 'M';
+            } else if (value >= 1000) {
+                return '$' + (value / 1000).toFixed(0) + 'K';
+            }
+            return '$' + value;
+        }
 
-    // ============================================================
-    //  EVENTOS
-    // ============================================================
+        // ============================================================
+        //  ACTUALIZAR MÉTRICAS
+        // ============================================================
 
-    document.addEventListener('DOMContentLoaded', () => {
-        poblarSelect();
+        function actualizarMetricas(proyectos) {
+            const totalPresupuesto = proyectos.reduce((sum, p) => sum + p.presupuesto, 0);
+            const totalReal = proyectos.reduce((sum, p) => sum + p.real, 0);
+            const totalComprometido = proyectos.reduce((sum, p) => sum + p.comprometido, 0);
+            const totalDisponible = proyectos.reduce((sum, p) => sum + p.disponible, 0);
 
-        const select = document.getElementById('proyectoSelect');
-        select.addEventListener('change', (e) => {
-            actualizarDashboard(e.target.value);
+            const pctReal = totalPresupuesto > 0 ? (totalReal / totalPresupuesto * 100) : 0;
+            const pctComprometido = totalPresupuesto > 0 ? (totalComprometido / totalPresupuesto * 100) : 0;
+            const pctDisponible = totalPresupuesto > 0 ? (totalDisponible / totalPresupuesto * 100) : 0;
+
+            document.getElementById('totalPresupuesto').textContent = formatCurrency(totalPresupuesto);
+            document.getElementById('subPresupuesto').textContent = `${proyectos.length} proyectos`;
+
+            document.getElementById('totalReal').textContent = formatCurrency(totalReal);
+            document.getElementById('changeReal').textContent = `${pctReal.toFixed(1)}% ejecutado`;
+
+            document.getElementById('totalComprometido').textContent = formatCurrency(totalComprometido);
+            document.getElementById('changeComprometido').textContent = `${pctComprometido.toFixed(1)}% comprometido`;
+
+            document.getElementById('totalDisponible').textContent = formatCurrency(totalDisponible);
+            document.getElementById('subDisponible').textContent = `${pctDisponible.toFixed(1)}% disponible`;
+
+            document.getElementById('totalProyectos').textContent = `${proyectos.length} proyectos`;
+        }
+
+        // ============================================================
+        //  GRÁFICOS
+        // ============================================================
+
+        function destruirGraficos() {
+            if (chartComparativo) { chartComparativo.destroy();
+                chartComparativo = null; }
+            if (chartDistribucion) { chartDistribucion.destroy();
+                chartDistribucion = null; }
+            if (chartEstado) { chartEstado.destroy();
+                chartEstado = null; }
+            if (chartEjecucion) { chartEjecucion.destroy();
+                chartEjecucion = null; }
+        }
+
+        function crearGraficos(proyectos) {
+            destruirGraficos();
+
+            // 1. Comparativo: Presupuesto vs Real vs Comprometido
+            const labels = proyectos.map(p => p.nombre.length > 15 ? p.nombre.substring(0, 12) + '...' : p.nombre);
+            const ctx1 = document.getElementById('chartComparativo').getContext('2d');
+            chartComparativo = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Presupuesto',
+                        data: proyectos.map(p => p.presupuesto),
+                        backgroundColor: 'rgba(45, 106, 159, 0.7)',
+                        borderRadius: 4,
+                    }, {
+                        label: 'Real',
+                        data: proyectos.map(p => p.real),
+                        backgroundColor: 'rgba(56, 161, 105, 0.7)',
+                        borderRadius: 4,
+                    }, {
+                        label: 'Comprometido',
+                        data: proyectos.map(p => p.comprometido),
+                        backgroundColor: 'rgba(237, 137, 54, 0.7)',
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { usePointStyle: true, padding: 16 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: v => formatCurrencyShort(v)
+                            }
+                        }
+                    }
+                }
+            });
+
+            // 2. Distribución por CEGE
+            const cegeData = {};
+            proyectos.forEach(p => {
+                cegeData[p.cege] = (cegeData[p.cege] || 0) + p.presupuesto;
+            });
+            const colores = ['#2d6a9f', '#48bb78', '#ed8936', '#9f7aea', '#fc8181', '#4299e1'];
+            const ctx2 = document.getElementById('chartDistribucion').getContext('2d');
+            chartDistribucion = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(cegeData),
+                    datasets: [{
+                        data: Object.values(cegeData),
+                        backgroundColor: colores.slice(0, Object.keys(cegeData).length),
+                        borderWidth: 2,
+                        borderColor: 'white'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { padding: 12, usePointStyle: true }
+                        }
+                    }
+                }
+            });
+
+            // 3. Estado de Proyectos (Vigentes vs No Vigentes)
+            const vigentes = proyectos.filter(p => p.vigente).length;
+            const noVigentes = proyectos.filter(p => !p.vigente).length;
+            const ctx3 = document.getElementById('chartEstado').getContext('2d');
+            chartEstado = new Chart(ctx3, {
+                type: 'pie',
+                data: {
+                    labels: ['✅ Vigentes', '❌ No Vigentes'],
+                    datasets: [{
+                        data: [vigentes, noVigentes],
+                        backgroundColor: ['#48bb78', '#fc8181'],
+                        borderWidth: 2,
+                        borderColor: 'white'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { padding: 12, usePointStyle: true }
+                        }
+                    }
+                }
+            });
+
+            // 4. Ejecución por POSPRE (Real / Presupuesto)
+            const pospreData = proyectos
+                .filter(p => p.real > 0 || p.comprometido > 0)
+                .map(p => ({
+                    label: p.pospre.length > 12 ? p.pospre.substring(0, 10) + '...' : p.pospre,
+                    ejecucion: p.presupuesto > 0 ? (p.real / p.presupuesto * 100) : 0,
+                    compromiso: p.presupuesto > 0 ? (p.comprometido / p.presupuesto * 100) : 0
+                }));
+
+            const ctx4 = document.getElementById('chartEjecucion').getContext('2d');
+            chartEjecucion = new Chart(ctx4, {
+                type: 'bar',
+                data: {
+                    labels: pospreData.map(d => d.label),
+                    datasets: [{
+                        label: 'Real %',
+                        data: pospreData.map(d => d.ejecucion),
+                        backgroundColor: 'rgba(56, 161, 105, 0.7)',
+                        borderRadius: 4,
+                    }, {
+                        label: 'Comprometido %',
+                        data: pospreData.map(d => d.compromiso),
+                        backgroundColor: 'rgba(237, 137, 54, 0.7)',
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { usePointStyle: true, padding: 16 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: v => v + '%'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ============================================================
+        //  TABLA
+        // ============================================================
+
+        function renderTabla(proyectos) {
+            const tbody = document.getElementById('tablaBody');
+            if (proyectos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:40px; color:#718096;">
+                    <i class="fas fa-inbox" style="font-size:28px; display:block; margin-bottom:8px;"></i>
+                    No hay proyectos con estos filtros
+                </td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = proyectos.map(p => {
+                const pctReal = p.presupuesto > 0 ? (p.real / p.presupuesto * 100) : 0;
+                const pctComprometido = p.presupuesto > 0 ? (p.comprometido / p.presupuesto * 100) : 0;
+
+                return `<tr>
+                    <td><strong>${p.nombre}</strong></td>
+                    <td><span class="badge-cege">${p.cege}</span></td>
+                    <td><span class="badge-pospre">${p.pospre}</span></td>
+                    <td class="monto">${formatCurrency(p.presupuesto)}</td>
+                    <td class="monto monto-real">${formatCurrency(p.real)}</td>
+                    <td class="monto monto-comprometido">${formatCurrency(p.comprometido)}</td>
+                    <td class="monto monto-disponible">${formatCurrency(p.disponible)}</td>
+                    <td>
+                        <div style="display:flex; gap:4px; align-items:center; font-size:11px;">
+                            <span>${pctReal.toFixed(1)}%</span>
+                            <div class="barra-progreso" style="width:60px;">
+                                <div class="fill fill-real" style="width:${Math.min(pctReal, 100)}%;"></div>
+                            </div>
+                            <span>${pctComprometido.toFixed(1)}%</span>
+                            <div class="barra-progreso" style="width:60px;">
+                                <div class="fill fill-comprometido" style="width:${Math.min(pctComprometido, 100)}%;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="badge-estado ${p.vigente ? 'badge-vigente' : 'badge-no-vigente'}">
+                            ${p.vigente ? '✅ Vigente' : '❌ No Vigente'}
+                        </span>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        // ============================================================
+        //  ACTUALIZAR DASHBOARD
+        // ============================================================
+
+        function actualizarDashboard() {
+            const cege = document.getElementById('filtroCEGE').value;
+            const estado = document.getElementById('filtroEstado').value;
+
+            const proyectos = getProyectosFiltrados(cege, estado);
+
+            actualizarMetricas(proyectos);
+            renderTabla(proyectos);
+            crearGraficos(proyectos);
+        }
+
+        // ============================================================
+        //  INICIALIZAR FILTROS
+        // ============================================================
+
+        function inicializarFiltros() {
+            const selectCEGE = document.getElementById('filtroCEGE');
+            const cegeList = getCEGEs();
+            cegeList.forEach(cege => {
+                const opt = document.createElement('option');
+                opt.value = cege;
+                opt.textContent = `📁 ${cege}`;
+                selectCEGE.appendChild(opt);
+            });
+        }
+
+        // ============================================================
+        //  EVENTOS
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            inicializarFiltros();
+
+            document.getElementById('filtroCEGE').addEventListener('change', actualizarDashboard);
+            document.getElementById('filtroEstado').addEventListener('change', actualizarDashboard);
+
+            document.getElementById('btnNuevo').addEventListener('click', () => {
+                alert('🆕 Abrir formulario para nuevo proyecto');
+            });
+
+            document.getElementById('btnExportar').addEventListener('click', () => {
+                alert('📤 Exportar datos a Excel');
+            });
+
+            actualizarDashboard();
         });
-
-        document.getElementById('btnNuevo').addEventListener('click', () => {
-            alert('🆕 Abrir formulario para nuevo movimiento');
-        });
-
-        document.getElementById('btnFiltrar').addEventListener('click', () => {
-            alert('🔍 Abrir panel de filtros avanzados');
-        });
-
-        actualizarDashboard('global');
-    });
-</script>
+    </script>
 
 </body>
 </html>
-
- 
