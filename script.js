@@ -131,6 +131,7 @@ const data = {
 //  VARIABLES GLOBALES
 // ============================================================
 let chartEjecucion = null;
+let ordenActual = 'ejecucion-desc';
 
 // ============================================================
 //  FUNCIONES DE UTILIDAD
@@ -191,6 +192,82 @@ function agruparPorCEGE(proyectos) {
         grupos[p.cege].pospres.push(p);
     });
     return Object.values(grupos);
+}
+
+// ============================================================
+//  ORDENAMIENTO DE TABLA
+// ============================================================
+
+function ordenarPOSPRE(proyectos, criterio) {
+    // Primero agrupar por CEGE
+    const grupos = {};
+    proyectos.forEach(p => {
+        if (!grupos[p.cege]) {
+            grupos[p.cege] = [];
+        }
+        grupos[p.cege].push(p);
+    });
+
+    // Para cada grupo, ordenar internamente según el criterio
+    Object.keys(grupos).forEach(cege => {
+        const grupo = grupos[cege];
+        switch (criterio) {
+            case 'ejecucion-desc':
+                grupo.sort((a, b) => {
+                    const pctA = a.presupuesto > 0 ? ((a.real + a.comprometido) / a.presupuesto * 100) : 0;
+                    const pctB = b.presupuesto > 0 ? ((b.real + b.comprometido) / b.presupuesto * 100) : 0;
+                    return pctB - pctA;
+                });
+                break;
+            case 'ejecucion-asc':
+                grupo.sort((a, b) => {
+                    const pctA = a.presupuesto > 0 ? ((a.real + a.comprometido) / a.presupuesto * 100) : 0;
+                    const pctB = b.presupuesto > 0 ? ((b.real + b.comprometido) / b.presupuesto * 100) : 0;
+                    return pctA - pctB;
+                });
+                break;
+            case 'presupuesto-desc':
+                grupo.sort((a, b) => b.presupuesto - a.presupuesto);
+                break;
+            case 'presupuesto-asc':
+                grupo.sort((a, b) => a.presupuesto - b.presupuesto);
+                break;
+            case 'real-desc':
+                grupo.sort((a, b) => b.real - a.real);
+                break;
+            case 'real-asc':
+                grupo.sort((a, b) => a.real - b.real);
+                break;
+            case 'comprometido-desc':
+                grupo.sort((a, b) => b.comprometido - a.comprometido);
+                break;
+            case 'comprometido-asc':
+                grupo.sort((a, b) => a.comprometido - b.comprometido);
+                break;
+            case 'pospre-asc':
+                grupo.sort((a, b) => a.pospre.localeCompare(b.pospre));
+                break;
+            case 'pospre-desc':
+                grupo.sort((a, b) => b.pospre.localeCompare(a.pospre));
+                break;
+            default:
+                break;
+        }
+    });
+
+    // Aplanar los grupos manteniendo el orden de los CEGE (por presupuesto total descendente)
+    const cegeOrder = Object.keys(grupos).sort((a, b) => {
+        const totalA = grupos[a].reduce((sum, p) => sum + p.presupuesto, 0);
+        const totalB = grupos[b].reduce((sum, p) => sum + p.presupuesto, 0);
+        return totalB - totalA;
+    });
+
+    const resultado = [];
+    cegeOrder.forEach(cege => {
+        resultado.push(...grupos[cege]);
+    });
+
+    return resultado;
 }
 
 // ============================================================
@@ -272,15 +349,19 @@ function actualizarMetricas(proyectos) {
 }
 
 function renderTabla(proyectos) {
+    // Aplicar ordenamiento
+    const proyectosOrdenados = ordenarPOSPRE(proyectos, ordenActual);
+
     const tbody = document.getElementById('tablaBody');
-    if (proyectos.length === 0) {
+    if (proyectosOrdenados.length === 0) {
         tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:40px; color:#718096;">
                     <i class="fas fa-inbox" style="font-size:28px; display:block; margin-bottom:8px;"></i>
                     No hay POSPRE con este filtro
                 </td></tr>`;
         return;
     }
-    tbody.innerHTML = proyectos.map(p => {
+
+    tbody.innerHTML = proyectosOrdenados.map(p => {
         const ejecutado = p.real + p.comprometido;
         const pctReal = p.presupuesto > 0 ? (p.real / p.presupuesto * 100) : 0;
         const pctComprometido = p.presupuesto > 0 ? (p.comprometido / p.presupuesto * 100) : 0;
@@ -457,8 +538,16 @@ function inicializarFiltros() {
 document.addEventListener('DOMContentLoaded', function() {
     inicializarFiltros();
     document.getElementById('filtroCEGE').addEventListener('change', actualizarDashboard);
+
+    // Evento para el selector de orden
+    document.getElementById('ordenTabla').addEventListener('change', function() {
+        ordenActual = this.value;
+        actualizarDashboard();
+    });
+
     document.getElementById('btnExportar').addEventListener('click', function() {
         alert('📤 Exportar datos a Excel');
     });
+
     actualizarDashboard();
 });
