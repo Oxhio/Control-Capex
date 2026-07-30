@@ -86,6 +86,22 @@
             <div class="table-header">
                 <h2><i class="fas fa-list-ul"></i> Detalle de POSPRE</h2>
                 <div class="table-actions">
+                    <!-- Selector de ordenamiento -->
+                    <div class="filter-group" style="background:#f7fafc; padding:4px 12px 4px 16px; border-radius:30px; border:1px solid #e2e8f0;">
+                        <label style="font-weight:600; font-size:12px; color:#4a5568;"><i class="fas fa-sort"></i> Ordenar:</label>
+                        <select id="ordenTabla" style="padding:4px 24px 4px 8px; border:none; background:transparent; font-size:13px; font-weight:500; color:#2d3748; cursor:pointer; appearance:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2210%22 height=%226%22 viewBox=%220 0 10 6%22%3E%3Cpath d=%22M1 1l4 4 4-4%22 stroke=%22%234a5568%22 stroke-width=%221.5%22 fill=%22none%22 stroke-linecap=%22round%22/%3E%3C/svg%3E'); background-repeat:no-repeat; background-position:right 4px center;">
+                            <option value="ejecucion-desc">📊 Mayor Ejecución</option>
+                            <option value="ejecucion-asc">📊 Menor Ejecución</option>
+                            <option value="presupuesto-desc">💰 Mayor Presupuesto</option>
+                            <option value="presupuesto-asc">💰 Menor Presupuesto</option>
+                            <option value="real-desc">💵 Mayor Real</option>
+                            <option value="real-asc">💵 Menor Real</option>
+                            <option value="comprometido-desc">📋 Mayor Comprometido</option>
+                            <option value="comprometido-asc">📋 Menor Comprometido</option>
+                            <option value="pospre-asc">🔤 POSPRE A-Z</option>
+                            <option value="pospre-desc">🔤 POSPRE Z-A</option>
+                        </select>
+                    </div>
                     <button class="btn btn-outline" id="btnExportar"><i class="fas fa-file-export"></i> Exportar</button>
                 </div>
             </div>
@@ -115,3 +131,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+
