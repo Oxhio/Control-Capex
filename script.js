@@ -520,3 +520,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     actualizarDashboard();
 });
+Reemplazar script.js con datos correctos de CEGE y POSPRE
