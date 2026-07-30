@@ -343,8 +343,18 @@ function crearGraficoEjecucion(proyectos) {
         return g.presupuesto > 0 ? (ejecutado / g.presupuesto * 100) : 0;
     });
 
-    const presupuestos = top5.map(g => g.presupuesto);
-    const colores = ['#2d6a9f', '#48bb78', '#ed8936', '#9f7aea', '#fc8181'];
+    // Colores según el % de ejecución
+    const colores = ejecucion.map(pct => {
+        if (pct > 100) return 'rgba(229, 62, 62, 0.85)';
+        if (pct > 90) return 'rgba(237, 137, 54, 0.85)';
+        return 'rgba(56, 161, 105, 0.85)';
+    });
+
+    const bordes = ejecucion.map(pct => {
+        if (pct > 100) return '#e53e3e';
+        if (pct > 90) return '#ed8936';
+        return '#38a169';
+    });
 
     const ctx = document.getElementById('chartEjecucion').getContext('2d');
     chartEjecucion = new Chart(ctx, {
@@ -354,16 +364,8 @@ function crearGraficoEjecucion(proyectos) {
             datasets: [{
                 label: '% Ejecución',
                 data: ejecucion,
-                backgroundColor: ejecucion.map(pct => {
-                    if (pct > 100) return 'rgba(229, 62, 62, 0.85)';
-                    if (pct > 90) return 'rgba(237, 137, 54, 0.85)';
-                    return 'rgba(56, 161, 105, 0.85)';
-                }),
-                borderColor: ejecucion.map(pct => {
-                    if (pct > 100) return '#e53e3e';
-                    if (pct > 90) return '#ed8936';
-                    return '#38a169';
-                }),
+                backgroundColor: colores,
+                borderColor: bordes,
                 borderWidth: 2,
                 borderRadius: 4,
             }]
