@@ -621,3 +621,57 @@ td {
         grid-template-columns: 1fr;
     }
 }
+/* ===== NUEVO MENÚ DE PESTAÑAS (AGREGADO AL FINAL) ===== */
+
+/* Contenedor del menú */
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Enlaces individuales del menú */
+.nav-item {
+    text-decoration: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4a5568;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Efecto al pasar el mouse */
+.nav-item:hover {
+    color: #2d6a9f; /* Usamos tu azul corporativo */
+    background-color: #ebf4ff; /* Azul muy claro */
+}
+
+/* Estado activo (cuando la pestaña está seleccionada) */
+.nav-item.active {
+    color: #2d6a9f;
+    background-color: #ebf4ff;
+    border-bottom: 2px solid #2d6a9f; /* Línea azul abajo */
+}
+
+/* ===== AJUSTE RESPONSIVE PARA EL NUEVO MENÚ ===== */
+/* (Esto va dentro de tu @media (max-width: 768px) que ya tienes al final) */
+
+/* Busca tu bloque @media (max-width: 768px) y dentro de él, agrega esto: */
+
+@media (max-width: 768px) {
+    /* ... (tu código responsive existente) ... */
+
+    /* AGREGAR ESTO PARA QUE EL MENÚ NO SE ROMPA EN CELULARES */
+    .nav-menu {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+}
