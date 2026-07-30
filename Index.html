@@ -14,21 +14,92 @@
 
     <!-- Tu CSS -->
     <link rel="stylesheet" href="style.css" />
+
+    <!-- ===== ESTILOS EXTRA PARA EL NUEVO MENÚ ===== -->
+    <style>
+        /* ===== ESTILOS DEL NUEVO MENÚ DE PESTAÑAS ===== */
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item {
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #4a5568;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Estado normal (hover) */
+        .nav-item:hover {
+            color: #2b6cb0;
+            background-color: #ebf8ff;
+        }
+
+        /* Estado activo (cuando estás en la página) */
+        .nav-item.active {
+            color: #2b6cb0; /* Azul oscuro */
+            background-color: #ebf8ff; /* Fondo azul muy claro */
+            box-shadow: inset 0 -2px 0 #3182ce; /* Línea azul abajo */
+        }
+
+        /* Adaptación para pantallas pequeñas */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            .header-right {
+                flex-wrap: wrap;
+                width: 100%;
+                border-top: 1px solid #e2e8f0;
+                padding-top: 15px;
+                justify-content: flex-start;
+            }
+            .nav-menu {
+                border-right: none !important;
+                padding-right: 0 !important;
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- ===== HEADER ===== -->
+        <!-- ===== HEADER (NUEVO CON PESTAÑAS) ===== -->
         <header class="header">
             <div class="header-left">
                 <h1><i class="fas fa-building"></i> Control-Capex</h1>
                 <div class="subtitle">Gestión de proyectos por CEGE y POSPRE</div>
             </div>
-            <div class="header-right">
-                <div class="filters">
+            
+            <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
+                
+                <!-- MENÚ DE PESTAÑAS -->
+                <nav class="nav-menu" style="display: flex; align-items: center; gap: 5px; border-right: 1px solid #e2e8f0; padding-right: 15px;">
+                    <a href="/" class="nav-item active" data-page="dashboard">
+                        <i class="fas fa-chart-pie"></i> Dashboard
+                    </a>
+                    <a href="pages/oc.html" class="nav-item" data-page="oc">
+                        <i class="fas fa-file-invoice"></i> Órdenes de Compra
+                    </a>
+                </nav>
+
+                <!-- FILTROS CEGE (Mantenemos tu diseño original) -->
+                <div class="filters" style="margin:0;">
                     <div class="filter-group">
-                        <label><i class="fas fa-filter"></i> CEGE:</label>
-                        <select id="filtroCEGE">
+                        <label style="margin-right: 4px;"><i class="fas fa-filter"></i> CEGE:</label>
+                        <select id="filtroCEGE" style="padding: 4px 24px 4px 8px;">
                             <option value="todos">🌐 Todos los CEGE</option>
                         </select>
                     </div>
@@ -129,6 +200,33 @@
 
     <!-- Tu JavaScript -->
     <script src="script.js"></script>
+
+    <!-- ===== SCRIPT PARA ILUMINAR EL BOTÓN CORRECTO SEGÚN LA URL ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Obtener la ruta actual de la página
+            const currentPath = window.location.pathname;
+            
+            // Seleccionar todos los botones del menú
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                // Limpiar cualquier clase active previa
+                item.classList.remove('active');
+                
+                // Obtener el enlace del botón
+                const link = item.getAttribute('href');
+                
+                // Si estoy en el index, y el botón es "/" o "/index.html"
+                if ( (currentPath === '/' || currentPath.endsWith('index.html')) && (link === '/' || link.endsWith('index.html')) ) {
+                    item.classList.add('active');
+                }
+                // Si estoy en "pages/oc.html", y el botón apunta a "pages/oc.html"
+                else if (currentPath.includes('pages/oc.html') && link.includes('pages/oc.html')) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
-
