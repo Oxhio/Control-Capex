@@ -8,7 +8,7 @@
     <!-- Font Awesome (íconos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
-    <!-- Chart.js (GRÁFICOS) - SE CARGA DESDE CDN -->
+    <!-- Chart.js (GRÁFICOS) -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
 
@@ -61,50 +61,25 @@
             </div>
         </section>
 
+        <!-- ===== GRÁFICO: % DE EJECUCIÓN POR CEGE (TOP 5) ===== -->
+        <div class="chart-main-wrapper">
+            <div class="chart-header">
+                <h2><i class="fas fa-chart-bar"></i> % de Ejecución por CEGE (Top 5 con mayor presupuesto)</h2>
+                <div style="display:flex; gap:16px; flex-wrap:wrap; font-size:12px;">
+                    <span><span style="display:inline-block; width:14px; height:14px; background:#38a169; border-radius:4px; vertical-align:middle;"></span> ≤ 90% (En rango)</span>
+                    <span><span style="display:inline-block; width:14px; height:14px; background:#ed8936; border-radius:4px; vertical-align:middle;"></span> 90-100% (Cerca del límite)</span>
+                    <span><span style="display:inline-block; width:14px; height:14px; background:#e53e3e; border-radius:4px; vertical-align:middle;"></span> > 100% (Sobre ejecutado)</span>
+                </div>
+            </div>
+            <div class="chart-container" style="height:350px;">
+                <canvas id="chartEjecucion"></canvas>
+            </div>
+        </div>
+
         <!-- ===== RESUMEN POR CEGE ===== -->
         <section class="cege-summary" id="cegeSummary">
             <!-- Generado por JavaScript -->
         </section>
-
-        <!-- ===== GRÁFICO PRINCIPAL: BARRAS AGRUPADAS ===== -->
-        <div class="chart-main-wrapper">
-            <div class="chart-header">
-                <h2><i class="fas fa-chart-bar"></i> Presupuesto vs (Real + Comprometido) por CEGE</h2>
-            </div>
-            <div class="chart-container">
-                <canvas id="chartPrincipal"></canvas>
-            </div>
-            <div class="legend-container">
-                <div class="legend-item">
-                    <div class="legend-color" style="background:#2d6a9f;"></div>
-                    <span>Presupuesto</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background:#38a169;"></div>
-                    <span>Real</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-color" style="background:#ed8936;"></div>
-                    <span>Comprometido</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- ===== GRÁFICOS SECUNDARIOS ===== -->
-        <div class="charts-secondary">
-            <div class="chart-card">
-                <h3><i class="fas fa-chart-pie"></i> Distribución por CEGE</h3>
-                <div class="chart-container">
-                    <canvas id="chartDistribucion"></canvas>
-                </div>
-            </div>
-            <div class="chart-card">
-                <h3><i class="fas fa-chart-doughnut"></i> Estado de Ejecución</h3>
-                <div class="chart-container">
-                    <canvas id="chartEstado"></canvas>
-                </div>
-            </div>
-        </div>
 
         <!-- ===== TABLA ===== -->
         <div class="table-wrapper">
