@@ -1,5 +1,5 @@
 // ============================================================
-//  DATOS - Con CEGE, POSPRE, Presupuesto, Real, Comprometido
+//  DATOS
 // ============================================================
 const data = {
     nombresCEGE: {
@@ -130,9 +130,7 @@ const data = {
 // ============================================================
 //  VARIABLES GLOBALES
 // ============================================================
-let chartPrincipal = null;
-let chartDistribucion = null;
-let chartEstado = null;
+let chartEjecucion = null;
 
 // ============================================================
 //  FUNCIONES DE UTILIDAD
@@ -316,81 +314,81 @@ function renderTabla(proyectos) {
 }
 
 // ============================================================
-//  GRÁFICOS
+//  GRÁFICO: % DE EJECUCIÓN POR CEGE (TOP 5 POR PRESUPUESTO)
 // ============================================================
 
 function destruirGraficos() {
-    if (chartPrincipal) { chartPrincipal.destroy();
-        chartPrincipal = null; }
-    if (chartDistribucion) { chartDistribucion.destroy();
-        chartDistribucion = null; }
-    if (chartEstado) { chartEstado.destroy();
-        chartEstado = null; }
+    if (chartEjecucion) { chartEjecucion.destroy();
+        chartEjecucion = null; }
 }
 
-function crearGraficos(proyectos) {
+function crearGraficoEjecucion(proyectos) {
     destruirGraficos();
+
+    // Agrupar por CEGE
     const grupos = agruparPorCEGE(proyectos);
-    const sortedGrupos = grupos.sort((a, b) => b.presupuesto - a.presupuesto);
-    const labels = sortedGrupos.map(g => {
-        const nombre = g.nombre.length > 18 ? g.nombre.substring(0, 16) + '…' : g.nombre;
+
+    // Ordenar por presupuesto descendente y tomar Top 5
+    const sorted = grupos.sort((a, b) => b.presupuesto - a.presupuesto);
+    const top5 = sorted.slice(0, 5);
+
+    // Preparar datos
+    const labels = top5.map(g => {
+        const nombre = g.nombre.length > 20 ? g.nombre.substring(0, 18) + '…' : g.nombre;
         return `${g.cege}\n${nombre}`;
     });
-    const presupuestos = sortedGrupos.map(g => g.presupuesto);
-    const reales = sortedGrupos.map(g => g.real);
-    const comprometidos = sortedGrupos.map(g => g.comprometido);
 
-    // GRÁFICO PRINCIPAL - BARRAS AGRUPADAS
-    const ctx1 = document.getElementById('chartPrincipal').getContext('2d');
-    chartPrincipal = new Chart(ctx1, {
+    const ejecucion = top5.map(g => {
+        const ejecutado = g.real + g.comprometido;
+        return g.presupuesto > 0 ? (ejecutado / g.presupuesto * 100) : 0;
+    });
+
+    const presupuestos = top5.map(g => g.presupuesto);
+    const colores = ['#2d6a9f', '#48bb78', '#ed8936', '#9f7aea', '#fc8181'];
+
+    const ctx = document.getElementById('chartEjecucion').getContext('2d');
+    chartEjecucion = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Presupuesto',
-                data: presupuestos,
-                backgroundColor: 'rgba(45, 106, 159, 0.85)',
-                borderColor: '#2d6a9f',
-                borderWidth: 2,
-                borderRadius: 4,
-            }, {
-                label: 'Real',
-                data: reales,
-                backgroundColor: 'rgba(56, 161, 105, 0.85)',
-                borderColor: '#38a169',
-                borderWidth: 2,
-                borderRadius: 4,
-            }, {
-                label: 'Comprometido',
-                data: comprometidos,
-                backgroundColor: 'rgba(237, 137, 54, 0.85)',
-                borderColor: '#ed8936',
+                label: '% Ejecución',
+                data: ejecucion,
+                backgroundColor: ejecucion.map(pct => {
+                    if (pct > 100) return 'rgba(229, 62, 62, 0.85)';
+                    if (pct > 90) return 'rgba(237, 137, 54, 0.85)';
+                    return 'rgba(56, 161, 105, 0.85)';
+                }),
+                borderColor: ejecucion.map(pct => {
+                    if (pct > 100) return '#e53e3e';
+                    if (pct > 90) return '#ed8936';
+                    return '#38a169';
+                }),
                 borderWidth: 2,
                 borderRadius: 4,
             }]
         },
         options: {
+            indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: { display: false },
+                legend: {
+                    display: false,
+                },
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
-                        },
-                        afterBody: function(tooltipItems) {
-                            const idx = tooltipItems[0].dataIndex;
-                            const grupo = sortedGrupos[idx];
+                            const idx = context.dataIndex;
+                            const grupo = top5[idx];
                             if (grupo) {
                                 const ejecutado = grupo.real + grupo.comprometido;
-                                const pct = grupo.presupuesto > 0 ? (ejecutado / grupo.presupuesto *
-                                    100) : 0;
                                 return [
-                                    '📌 ' + grupo.nombre,
-                                    '📦 ' + grupo.pospres.length + ' POSPRE',
-                                    '📊 Ejecución: ' + pct.toFixed(1) + '%',
-                                    '💵 Disponible: ' + formatCurrency(grupo.disponible)
+                                    '📊 Ejecución: ' + context.parsed.x.toFixed(1) + '%',
+                                    '💰 Presupuesto: ' + formatCurrency(grupo.presupuesto),
+                                    '💵 Real: ' + formatCurrency(grupo.real),
+                                    '📋 Comprometido: ' + formatCurrency(grupo.comprometido),
+                                    '💳 Disponible: ' + formatCurrency(grupo.disponible)
                                 ];
                             }
                             return [];
@@ -400,79 +398,20 @@ function crearGraficos(proyectos) {
             },
             scales: {
                 x: {
-                    grid: { display: false },
-                    ticks: { font: { size: 10, weight: 'bold' }, maxRotation: 0 }
+                    beginAtZero: true,
+                    max: 110,
+                    ticks: {
+                        callback: v => v + '%',
+                        font: { size: 10 }
+                    },
+                    grid: { display: true }
                 },
                 y: {
-                    beginAtZero: true,
-                    ticks: { callback: v => formatCurrencyShort(v), font: { size: 10 } }
-                }
-            }
-        }
-    });
-
-    // GRÁFICO 2: Distribución por CEGE
-    const cegeData = {};
-    const cegeNombres = {};
-    proyectos.forEach(p => {
-        cegeData[p.cege] = (cegeData[p.cege] || 0) + p.presupuesto;
-        cegeNombres[p.cege] = getNombreCEGE(p.cege);
-    });
-    const colores = ['#2d6a9f', '#48bb78', '#ed8936', '#9f7aea', '#fc8181', '#4299e1'];
-    const ctx2 = document.getElementById('chartDistribucion').getContext('2d');
-    chartDistribucion = new Chart(ctx2, {
-        type: 'doughnut',
-        data: {
-            labels: Object.keys(cegeData).map(c => `${c}\n${cegeNombres[c]}`),
-            datasets: [{
-                data: Object.values(cegeData),
-                backgroundColor: colores.slice(0, Object.keys(cegeData).length),
-                borderWidth: 2,
-                borderColor: 'white'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { padding: 10, usePointStyle: true, font: { size: 10 }, textAlign: 'center' }
-                }
-            }
-        }
-    });
-
-    // GRÁFICO 3: Estado de Ejecución
-    let enRango = 0,
-        cercaLimite = 0,
-        sobreEjecutado = 0;
-    proyectos.forEach(p => {
-        const ejecutado = p.real + p.comprometido;
-        const pct = p.presupuesto > 0 ? (ejecutado / p.presupuesto * 100) : 0;
-        if (pct > 100) sobreEjecutado++;
-        else if (pct > 90) cercaLimite++;
-        else enRango++;
-    });
-    const ctx3 = document.getElementById('chartEstado').getContext('2d');
-    chartEstado = new Chart(ctx3, {
-        type: 'pie',
-        data: {
-            labels: ['✅ En Rango', '⚡ Cerca del Límite', '⚠️ Sobre Ejecutado'],
-            datasets: [{
-                data: [enRango, cercaLimite, sobreEjecutado],
-                backgroundColor: ['#48bb78', '#fefcbf', '#fc8181'],
-                borderColor: ['#38a169', '#ecc94b', '#e53e3e'],
-                borderWidth: 2,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: { padding: 10, usePointStyle: true, font: { size: 11 } }
+                    grid: { display: false },
+                    ticks: {
+                        font: { size: 9, weight: 'bold' },
+                        maxRotation: 0,
+                    }
                 }
             }
         }
@@ -486,10 +425,11 @@ function crearGraficos(proyectos) {
 function actualizarDashboard() {
     const cege = document.getElementById('filtroCEGE').value;
     const proyectos = getProyectosFiltrados(cege);
+
     actualizarMetricas(proyectos);
     renderResumenCEGE(proyectos);
     renderTabla(proyectos);
-    crearGraficos(proyectos);
+    crearGraficoEjecucion(proyectos);
 }
 
 // ============================================================
@@ -520,4 +460,3 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     actualizarDashboard();
 });
-Reemplazar script.js con datos correctos de CEGE y POSPRE
