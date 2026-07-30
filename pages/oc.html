@@ -1,249 +1,133 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Control-Capex - Órdenes de Compra</title>
-    
-    <!-- Aquí deberías tener tus enlaces a Tailwind, Chart.js y tu archivo de estilos globales -->
-    <!-- Ejemplo: -->
-    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
-    <!-- <link rel="stylesheet" href="../styles.css"> -->
 
-    <style>
-        /* Pequeños estilos adicionales para mantener la coherencia visual con tu captura */
-        .kpi-card { border-left: 4px solid #2563eb; }
-        .chart-container { position: relative; height: 300px; width: 100%; }
-        
-        /* Badges de estado */
-        .badge-green { background-color: #dcfce7; color: #166534; }
-        .badge-orange { background-color: #fef3c7; color: #92400e; }
-        .badge-red { background-color: #fee2e2; color: #991b1b; }
-    </style>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+
+    <!-- Tu CSS (subimos un nivel porque pages/ está dentro) -->
+    <link rel="stylesheet" href="../style.css" />
 </head>
-<body class="bg-gray-50 text-gray-800 font-sans min-h-screen flex flex-col">
+<body>
 
-    <!-- NAVEGACIÓN SUPERIOR (Reutiliza tu Header existente) -->
-    <header class="bg-white border-b border-gray-200 px-6 py-4 shadow-sm flex justify-between items-center">
-        <div class="flex items-center space-x-4">
-            <h1 class="text-xl font-bold text-blue-600">🏢 Control-Capex</h1>
-        </div>
-        <nav class="flex items-center space-x-4 text-sm text-gray-600">
-            <a href="../index.html" class="hover:text-blue-600">Dashboard</a>
-            <a href="presupuestos.html" class="hover:text-blue-600">Presupuestos</a>
-            <a href="oc.html" class="font-bold text-blue-600 border-b-2 border-blue-600 pb-1">OC por CEGE</a>
-            <a href="activos.html" class="hover:text-blue-600">Activos</a>
-            <a href="reportes.html" class="hover:text-blue-600">Reportes</a>
-        </nav>
-    </header>
+    <div class="container">
+        <!-- ===== HEADER CON MENÚ DE PESTAÑAS ===== -->
+        <header class="header">
+            <div class="header-left">
+                <h1><i class="fas fa-building"></i> Control-Capex</h1>
+                <div class="subtitle">Gestión de proyectos por CEGE y POSPRE</div>
+            </div>
+            
+            <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
+                
+                <!-- MENÚ DE PESTAÑAS -->
+                <nav class="nav-menu" style="display: flex; align-items: center; gap: 5px; border-right: 1px solid #e2e8f0; padding-right: 15px;">
+                    <!-- Subimos un nivel con ../ para volver al index -->
+                    <a href="../index.html" class="nav-item" data-page="dashboard">
+                        <i class="fas fa-chart-pie"></i> Dashboard
+                    </a>
+                    <a href="oc.html" class="nav-item active" data-page="oc">
+                        <i class="fas fa-file-invoice"></i> Órdenes de Compra
+                    </a>
+                </nav>
 
-    <!-- CONTENEDOR PRINCIPAL -->
-    <main class="flex-grow container mx-auto px-4 py-6 max-w-7xl">
+                <!-- FILTROS CEGE -->
+                <div class="filters" style="margin:0;">
+                    <div class="filter-group">
+                        <label style="margin-right: 4px;"><i class="fas fa-filter"></i> CEGE:</label>
+                        <select id="filtroCEGE" style="padding: 4px 24px 4px 8px;">
+                            <option value="todos">🌐 Todos los CEGE</option>
+                        </select>
+                    </div>
+                </div>
+                <span class="badge-total" id="totalProyectos">0 OC</span>
+            </div>
+        </header>
 
-        <!-- FILTROS SUPERIORES -->
-        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6 flex flex-wrap gap-4 items-end">
-            <div class="flex flex-col w-full sm:w-auto">
-                <label for="filter-cege" class="text-xs font-semibold text-gray-500 uppercase mb-1">CEGE</label>
-                <select id="filter-cege" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white w-64">
-                    <option value="all">Todos los CEGE</option>
-                    <!-- Opciones generadas dinámicamente -->
-                </select>
+        <!-- ===== CONTENIDO DE LA PÁGINA DE OC ===== -->
+        <div class="metrics-grid" id="metricsGrid">
+            <div class="metric-card">
+                <div class="label"><i class="fas fa-coins"></i> Total Comprometido</div>
+                <div class="value" id="totalComprometido">$0</div>
+                <div class="sub" id="subComprometido">0 OC</div>
             </div>
-            <div class="flex flex-col w-full sm:w-auto">
-                <label for="filter-pospre" class="text-xs font-semibold text-gray-500 uppercase mb-1">POSPRE</label>
-                <select id="filter-pospre" class="border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white w-64">
-                    <option value="all">Todas las POSPRE</option>
-                    <!-- Opciones generadas dinámicamente -->
-                </select>
+            <div class="metric-card">
+                <div class="label"><i class="fas fa-file-invoice"></i> Cantidad de OC</div>
+                <div class="value" id="totalOC">0</div>
+                <div class="sub">Órdenes activas</div>
             </div>
-            <button id="btn-filter" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-2 px-6 rounded shadow-sm transition">
-                Aplicar Filtros
-            </button>
-        </div>
-
-        <!-- KPIS SUPERIORES -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <!-- Tarjeta 1 -->
-            <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200 kpi-card">
-                <p class="text-xs font-semibold text-blue-500 uppercase tracking-wide">Total Comprometido</p>
-                <p id="kpi-total-comprometido" class="text-2xl font-bold text-gray-800 mt-1">$0</p>
-                <p class="text-xs text-gray-400 mt-1">Monto total en OC activas</p>
-            </div>
-            <!-- Tarjeta 2 -->
-            <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200 kpi-card">
-                <p class="text-xs font-semibold text-blue-500 uppercase tracking-wide">Cantidad de OC</p>
-                <p id="kpi-cantidad-oc" class="text-2xl font-bold text-gray-800 mt-1">0</p>
-                <p class="text-xs text-gray-400 mt-1">Órdenes de compra activas</p>
-            </div>
-            <!-- Tarjeta 3 -->
-            <div class="bg-white p-5 rounded-lg shadow-sm border border-gray-200 kpi-card">
-                <p class="text-xs font-semibold text-blue-500 uppercase tracking-wide">Proveedores Únicos</p>
-                <p id="kpi-proveedores" class="text-2xl font-bold text-gray-800 mt-1">0</p>
-                <p class="text-xs text-gray-400 mt-1">Proveedores con OC activas</p>
+            <div class="metric-card">
+                <div class="label"><i class="fas fa-building"></i> Proveedores Únicos</div>
+                <div class="value" id="totalProveedores">0</div>
+                <div class="sub">Proveedores con OC</div>
             </div>
         </div>
 
-        <!-- GRÁFICO DE BARRAS (Chart.js) -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200 mb-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-lg font-bold text-gray-700">📊 Comprometido por POSPRE (Top 5)</h2>
-                <div class="flex space-x-3 text-xs">
-                    <span class="flex items-center"><span class="w-3 h-3 bg-green-500 rounded-full mr-1"></span> En rango</span>
-                    <span class="flex items-center"><span class="w-3 h-3 bg-orange-500 rounded-full mr-1"></span> Cerca del límite</span>
-                    <span class="flex items-center"><span class="w-3 h-3 bg-red-500 rounded-full mr-1"></span> Sobregirado</span>
+        <!-- ===== GRÁFICO: COMPROMETIDO POR POSPRE ===== -->
+        <div class="chart-main-wrapper">
+            <div class="chart-header">
+                <h2><i class="fas fa-chart-bar"></i> % de Comprometido por POSPRE (Top 5)</h2>
+                <div style="display:flex; gap:16px; flex-wrap:wrap; font-size:12px;">
+                    <span><span style="display:inline-block; width:14px; height:14px; background:#38a169; border-radius:4px; vertical-align:middle;"></span> En rango</span>
+                    <span><span style="display:inline-block; width:14px; height:14px; background:#ed8936; border-radius:4px; vertical-align:middle;"></span> Cerca del límite</span>
+                    <span><span style="display:inline-block; width:14px; height:14px; background:#e53e3e; border-radius:4px; vertical-align:middle;"></span> Sobregirado</span>
                 </div>
             </div>
-            <div class="chart-container">
-                <canvas id="chart-oc-pospre"></canvas>
+            <div class="chart-container" style="height:350px;">
+                <canvas id="chartOC"></canvas>
             </div>
         </div>
 
-        <!-- TABLA DE DETALLE DE OC -->
-        <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-4">
-                <h2 class="text-lg font-bold text-gray-700">📋 Detalle de Órdenes de Compra</h2>
-                <div class="flex space-x-2 mt-2 sm:mt-0">
-                    <button id="btn-export" class="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-1.5 px-3 rounded border border-gray-300">
-                        Exportar
-                    </button>
+        <!-- ===== TABLA DE OC ===== -->
+        <div class="table-wrapper">
+            <div class="table-header">
+                <h2><i class="fas fa-list-ul"></i> Detalle de Órdenes de Compra</h2>
+                <div class="table-actions">
+                    <button class="btn btn-outline" id="btnExportar"><i class="fas fa-file-export"></i> Exportar</button>
                 </div>
             </div>
-
-            <!-- Contenedor de la tabla (scrollable) -->
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-600">
-                    <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
+            <div class="table-scroll">
+                <table>
+                    <thead>
                         <tr>
-                            <th scope="col" class="px-4 py-3 font-semibold">OC #</th>
-                            <th scope="col" class="px-4 py-3 font-semibold">Fecha</th>
-                            <th scope="col" class="px-4 py-3 font-semibold">Proveedor</th>
-                            <th scope="col" class="px-4 py-3 font-semibold text-right">Monto Comprometido</th>
-                            <th scope="col" class="px-4 py-3 font-semibold">Estado</th>
-                            <th scope="col" class="px-4 py-3 font-semibold text-center">Acción</th>
+                            <th>OC #</th>
+                            <th>Fecha</th>
+                            <th>Proveedor</th>
+                            <th>Monto Comprometido</th>
+                            <th>Estado</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
-                    <tbody id="table-body-oc" class="divide-y divide-gray-100">
-                        <!-- Las filas se generarán dinámicamente aquí -->
-                        <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-gray-400 italic">
-                                Cargando datos o no hay OC para los filtros seleccionados...
-                            </td>
-                        </tr>
+                    <tbody id="tablaOC">
+                        <!-- Datos cargados con JavaScript -->
                     </tbody>
                 </table>
             </div>
         </div>
+    </div>
 
-    </main>
-
-    <!-- SCRIPTS DE LÓGICA -->
+    <!-- Script para iluminar la pestaña activa (opcional, ya que manualmente puse "active" arriba, pero por seguridad) -->
     <script>
-        // NOTA: Esta es la estructura lógica. Debes conectarla a tu función de carga de Excel.
-
-        // 1. Variables globales
-        let originalData = []; // Aquí guardarás el array de objetos que sale de leer tu Excel
-        let chartInstance = null;
-
-        // 2. Función para renderizar la tabla
-        function renderTable(data) {
-            const tbody = document.getElementById('table-body-oc');
-            if (!data || data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="px-4 py-8 text-center text-gray-400 italic">No se encontraron Órdenes de Compra para esta selección.</td></tr>`;
-                return;
-            }
-
-            tbody.innerHTML = data.map(oc => `
-                <tr class="hover:bg-gray-50 transition">
-                    <td class="px-4 py-3 font-medium text-blue-600">${oc.id || 'N/A'}</td>
-                    <td class="px-4 py-3">${oc.fecha || '-'}</td>
-                    <td class="px-4 py-3 max-w-[200px] truncate" title="${oc.proveedor || ''}">${oc.proveedor || 'Proveedor Genérico'}</td>
-                    <td class="px-4 py-3 text-right font-mono">${formatearMoneda(oc.monto)}</td>
-                    <td class="px-4 py-3">
-                        <span class="px-2 py-1 rounded-full text-xs font-semibold ${oc.estadoClase || 'badge-green'}">
-                            ${oc.estadoTexto || 'En rango'}
-                        </span>
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                        <button onclick="verDetalleOC('${oc.id}')" class="text-blue-600 hover:text-blue-800 hover:underline text-xs font-medium">
-                            Ver Detalle
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // 3. Función para renderizar el gráfico (Chart.js)
-        function renderChart(data) {
-            // Aquí iría tu lógica para agregar los datos del Top 5 de POSPRE
-            // Ejemplo simplificado:
-            const labels = data.map(item => item.pospre).slice(0, 5);
-            const values = data.map(item => item.monto).slice(0, 5);
-
-            if (chartInstance) chartInstance.destroy();
-
-            const ctx = document.getElementById('chart-oc-pospre').getContext('2d');
-            chartInstance = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Monto Comprometido',
-                        data: values,
-                        backgroundColor: '#3b82f6', // Color azul por defecto
-                        borderRadius: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return `$${context.raw.toLocaleString('es-CL')}`;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { callback: value => value >= 1000000 ? (value/1000000).toFixed(1)+'M' : value } }
-                    }
+        document.addEventListener('DOMContentLoaded', function() {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                const link = item.getAttribute('href');
+                if (link.includes('oc.html')) {
+                    item.classList.add('active');
                 }
             });
-        }
-
-        // 4. Función para actualizar KPIs
-        function updateKPIs(data) {
-            // Lógica de suma para los KPIs
-            document.getElementById('kpi-total-comprometido').textContent = formatearMoneda(12000000);
-            document.getElementById('kpi-cantidad-oc').textContent = data.length;
-            document.getElementById('kpi-proveedores').textContent = new Set(data.map(item => item.proveedor)).size;
-        }
-
-        // 5. Utilidades
-        function formatearMoneda(valor) {
-            return new Intl.NumberFormat('es-CL', { style: 'currency', currency: 'CLP', minimumFractionDigits: 0 }).format(valor);
-        }
-
-        function verDetalleOC(id) {
-            console.log(`Abriendo detalle de OC: ${id}`);
-            alert(`Aquí abrirías el modal o redirigirías a la página de detalle de la OC ${id}`);
-        }
-
-        // 6. Lógica de Inicialización (Ejecutar al cargar)
-        document.addEventListener('DOMContentLoaded', () => {
-            // Aquí debes llamar a tu función que lee el archivo OCr.XLSX y llena `originalData`
-            // loadExcelData(); 
-            // renderChart(processedChartData);
-            // renderTable(processedTableData);
-            // updateKPIs(processedTableData);
-            
-            // (Para pruebas, se renderiza con datos vacíos)
-            renderTable([]);
         });
-
     </script>
+
+    <!-- Aquí iría tu script.js para cargar los datos del Excel específicos de OC -->
+    <script src="../script.js"></script> <!-- Ajusta la ruta si tu script está en la raíz -->
 </body>
 </html>
