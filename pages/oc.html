@@ -12,9 +12,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
     </script>
 
+    <!-- Tu CSS -->
     <link rel="stylesheet" href="../style.css" />
 
-    <!-- Estilo extra para el botón de asignar -->
+    <!-- Estilos CSS para los nuevos elementos de la tabla -->
     <style>
         .btn-asignar {
             background-color: #2563eb;
@@ -66,6 +67,8 @@
             </div>
             
             <div class="header-right" style="display: flex; align-items: center; gap: 15px;">
+                
+                <!-- MENÚ DE PESTAÑAS -->
                 <nav class="nav-menu" style="display: flex; align-items: center; gap: 5px; border-right: 1px solid #e2e8f0; padding-right: 15px;">
                     <a href="../index.html" class="nav-item" data-page="dashboard">
                         <i class="fas fa-chart-pie"></i> Dashboard
@@ -74,6 +77,8 @@
                         <i class="fas fa-file-invoice"></i> Órdenes de Compra
                     </a>
                 </nav>
+
+                <!-- FILTROS CEGE -->
                 <div class="filters" style="margin:0;">
                     <div class="filter-group">
                         <label style="margin-right: 4px;"><i class="fas fa-filter"></i> CEGE:</label>
@@ -105,7 +110,7 @@
             </div>
         </div>
 
-        <!-- ===== GRÁFICO ===== -->
+        <!-- ===== GRÁFICO: MONTO COMPROMETIDO POR CEGE (TOP 5) ===== -->
         <div class="chart-main-wrapper">
             <div class="chart-header">
                 <h2><i class="fas fa-chart-bar"></i> Monto Comprometido por CEGE (Top 5)</h2>
@@ -131,7 +136,7 @@
                             <th>Fecha</th>
                             <th>Proveedor</th>
                             <th>Monto Comprometido</th>
-                            <th>Responsable</th> <!-- NUEVA COLUMNA -->
+                            <th>Responsable</th>
                             <th>Acción</th>
                         </tr>
                     </thead>
@@ -143,16 +148,64 @@
         </div>
     </div>
 
-    <!-- Script de lógica -->
+    <!-- ============================ -->
+    <!--  TODA LA LÓGICA JAVASCRIPT  -->
+    <!-- ============================ -->
     <script>
-        // 1. Datos de prueba (Algunos tienen responsable, otros no)
+        // 1. Configuración del GRÁFICO (Chart.js)
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('chartOC').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['CL-RM-TR-MAC', 'CL-RM-SN-COC', 'CL-RM-TR-FAC', 'CL-RM-TR-IPA', 'CL-RM-EX-ELT'],
+                    datasets: [{
+                        label: 'Monto Comprometido',
+                        data: [1500000000, 900000000, 450000000, 300000000, 120000000],
+                        backgroundColor: '#3182ce', // Azul corporativo sólido
+                        borderColor: '#2b6cb0',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Comprometido: $' + context.raw.toLocaleString('es-CL');
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    if (value >= 1000000) {
+                                        return '$' + (value / 1000000).toFixed(1) + 'M';
+                                    }
+                                    return '$' + value;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+
+        // 2. Lógica de la TABLA (Responsables)
         const ocData = [
             { id: '2000305910', fecha: '2026-01-02', proveedor: 'CORPORACION ZTE DE CHILE S.A.', monto: 45776, responsable: 'Juan Pérez' },
             { id: '2000306820', fecha: '2026-01-02', proveedor: 'Raylex Diginet S.A.', monto: 205328, responsable: null },
             { id: '2000309745', fecha: '2026-01-05', proveedor: 'Empresa de Ingenieria y Comunicacion', monto: 7817818, responsable: null }
         ];
 
-        // 2. Función para pintar la tabla
         function renderizarTabla(datos) {
             const tbody = document.getElementById('tablaOC');
             tbody.innerHTML = '';
@@ -161,12 +214,10 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 transition';
 
-                // Si tiene responsable, mostramos el nombre. Si no, mostramos el input + botón.
                 let responsableHTML = '';
                 if (oc.responsable) {
                     responsableHTML = `<span class="responsable-nombre">${oc.responsable}</span>`;
                 } else {
-                    // Generamos un ID único para el input de esta fila
                     const inputId = `input-${index}`;
                     responsableHTML = `
                         <input type="text" id="${inputId}" class="input-responsable" placeholder="Escribe el nombre...">
@@ -190,7 +241,6 @@
             });
         }
 
-        // 3. Función para guardar el responsable
         window.asignarResponsable = function(index, inputId) {
             const input = document.getElementById(inputId);
             const nombre = input.value.trim();
@@ -200,14 +250,11 @@
                 return;
             }
 
-            // Guardamos en el array de datos
             ocData[index].responsable = nombre;
-
-            // Refrescamos la tabla para que desaparezca el input y aparezca el nombre
             renderizarTabla(ocData);
         };
 
-        // 4. Ejecutar al cargar la página
+        // 3. Ejecutar al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             renderizarTabla(ocData);
             
