@@ -29,7 +29,6 @@
                 
                 <!-- MENÚ DE PESTAÑAS -->
                 <nav class="nav-menu" style="display: flex; align-items: center; gap: 5px; border-right: 1px solid #e2e8f0; padding-right: 15px;">
-                    <!-- Subimos un nivel con ../ para volver al index -->
                     <a href="../index.html" class="nav-item" data-page="dashboard">
                         <i class="fas fa-chart-pie"></i> Dashboard
                     </a>
@@ -51,23 +50,20 @@
             </div>
         </header>
 
-        <!-- ===== CONTENIDO DE LA PÁGINA DE OC ===== -->
+        <!-- ===== KPI's (TARJETAS DE RESUMEN) ===== -->
         <div class="metrics-grid" id="metricsGrid">
             <div class="metric-card">
                 <div class="label"><i class="fas fa-coins"></i> Total Comprometido</div>
-                <!-- Cambié el valor para que se vea con datos -->
                 <div class="value" id="totalComprometido">$4.631.312.767</div>
-                <div class="sub" id="subComprometido">0 OC</div>
+                <div class="sub" id="subComprometido">Monto en OC activas</div>
             </div>
             <div class="metric-card">
                 <div class="label"><i class="fas fa-file-invoice"></i> Cantidad de OC</div>
-                <!-- Cambié el valor para que se vea con datos -->
                 <div class="value" id="totalOC">2.487</div>
                 <div class="sub">Órdenes activas</div>
             </div>
             <div class="metric-card">
                 <div class="label"><i class="fas fa-building"></i> Proveedores Únicos</div>
-                <!-- Cambié el valor para que se vea con datos -->
                 <div class="value" id="totalProveedores">84</div>
                 <div class="sub">Proveedores con OC</div>
             </div>
@@ -84,6 +80,7 @@
                 </div>
             </div>
             <div class="chart-container" style="height:350px;">
+                <!-- Asegúrate de que el ID sea chartOC -->
                 <canvas id="chartOC"></canvas>
             </div>
         </div>
@@ -109,7 +106,7 @@
                         </tr>
                     </thead>
                     <tbody id="tablaOC">
-                        <!-- ===== AQUÍ ESTÁN LOS DATOS DE PRUEBA QUE TE FALTABAN ===== -->
+                        <!-- Datos de prueba -->
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-4 py-3 font-medium text-blue-600">2000305910</td>
                             <td class="px-4 py-3">2026-01-02</td>
@@ -153,8 +150,5 @@
             });
         });
     </script>
-
-    <!-- Aquí iría tu script.js para cargar los datos del Excel específicos de OC -->
-    <script src="../script.js"></script> 
 </body>
 </html>
