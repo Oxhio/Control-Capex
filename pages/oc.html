@@ -15,21 +15,22 @@
     <!-- Tu CSS -->
     <link rel="stylesheet" href="../style.css" />
 
-    <!-- Estilos CSS para los nuevos elementos de la tabla -->
+    <!-- Estilos CSS para la nueva funcionalidad de edición -->
     <style>
-        .btn-asignar {
-            background-color: #2563eb;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 4px;
+        .btn-edit {
+            background: transparent;
             border: none;
-            font-size: 12px;
+            color: #6b7280;
             cursor: pointer;
-            transition: background 0.2s;
+            font-size: 14px;
+            padding: 4px;
+            transition: color 0.2s;
+            margin-left: 8px;
         }
-        .btn-asignar:hover {
-            background-color: #1d4ed8;
+        .btn-edit:hover {
+            color: #2563eb;
         }
+
         .input-responsable {
             border: 1px solid #d1d5db;
             padding: 4px 8px;
@@ -37,6 +38,7 @@
             font-size: 12px;
             width: 140px;
         }
+
         .btn-guardar {
             background-color: #10b981;
             color: white;
@@ -50,6 +52,19 @@
         .btn-guardar:hover {
             background-color: #059669;
         }
+
+        .btn-cancel {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 14px;
+            margin-left: 4px;
+        }
+        .btn-cancel:hover {
+            color: #b91c1c;
+        }
+
         .responsable-nombre {
             font-weight: 500;
             color: #374151;
@@ -163,7 +178,7 @@
                     datasets: [{
                         label: 'Monto Comprometido',
                         data: [1500000000, 900000000, 450000000, 300000000, 120000000],
-                        backgroundColor: '#3182ce', // Azul corporativo sólido
+                        backgroundColor: '#3182ce',
                         borderColor: '#2b6cb0',
                         borderWidth: 1,
                         borderRadius: 4
@@ -199,10 +214,10 @@
             });
         });
 
-        // 2. Lógica de la TABLA (Responsables)
+        // 2. Lógica de la TABLA (Responsables con EDICIÓN)
         const ocData = [
             { id: '2000305910', fecha: '2026-01-02', proveedor: 'CORPORACION ZTE DE CHILE S.A.', monto: 45776, responsable: 'Juan Pérez' },
-            { id: '2000306820', fecha: '2026-01-02', proveedor: 'Raylex Diginet S.A.', monto: 205328, responsable: null },
+            { id: '2000306820', fecha: '2026-01-02', proveedor: 'Raylex Diginet S.A.', monto: 205328, responsable: 'María Gómez' },
             { id: '2000309745', fecha: '2026-01-05', proveedor: 'Empresa de Ingenieria y Comunicacion', monto: 7817818, responsable: null }
         ];
 
@@ -214,18 +229,24 @@
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 transition';
 
-                let responsableHTML = '';
-                if (oc.responsable) {
-                    responsableHTML = `<span class="responsable-nombre">${oc.responsable}</span>`;
-                } else {
-                    const inputId = `input-${index}`;
-                    responsableHTML = `
-                        <input type="text" id="${inputId}" class="input-responsable" placeholder="Escribe el nombre...">
-                        <button onclick="asignarResponsable(${index}, '${inputId}')" class="btn-guardar">
-                            <i class="fas fa-check"></i> Asignar
+                // Siempre mostramos el nombre (si existe), y el botón de editar al lado.
+                const nombreActual = oc.responsable ? oc.responsable : 'Sin asignar';
+                const colorClase = oc.responsable ? 'responsable-nombre' : 'text-gray-400 italic';
+
+                // El botón de editar siempre visible
+                let responsableHTML = `
+                    <div style="display:flex; align-items:center;">
+                        <span id="nombre-${index}" class="${colorClase}">${nombreActual}</span>
+                        <button onclick="activarEdicion(${index})" class="btn-edit" title="Editar responsable">
+                            <i class="fas fa-pen"></i>
                         </button>
-                    `;
-                }
+                    </div>
+                    <div id="editor-${index}" style="display:none; align-items:center;">
+                        <input type="text" id="input-${index}" class="input-responsable" value="${nombreActual}">
+                        <button onclick="guardarResponsable(${index})" class="btn-guardar"><i class="fas fa-check"></i></button>
+                        <button onclick="cancelarEdicion(${index})" class="btn-cancel"><i class="fas fa-times"></i></button>
+                    </div>
+                `;
 
                 tr.innerHTML = `
                     <td class="px-4 py-3 font-medium text-blue-600">${oc.id}</td>
@@ -241,20 +262,32 @@
             });
         }
 
-        window.asignarResponsable = function(index, inputId) {
-            const input = document.getElementById(inputId);
-            const nombre = input.value.trim();
+        // 3. Funciones de Edición
+        window.activarEdicion = function(index) {
+            document.getElementById(`nombre-${index}`).parentElement.style.display = 'none';
+            document.getElementById(`editor-${index}`).style.display = 'flex';
+            document.getElementById(`input-${index}`).focus();
+        };
 
-            if (nombre === '') {
-                alert('Por favor, escribe el nombre del responsable.');
-                return;
+        window.guardarResponsable = function(index) {
+            const input = document.getElementById(`input-${index}`);
+            const nuevoNombre = input.value.trim();
+            
+            if (nuevoNombre !== '') {
+                ocData[index].responsable = nuevoNombre;
+            } else {
+                ocData[index].responsable = null;
             }
+            
+            renderizarTabla(ocData); // Re-renderizar la tabla con los cambios
+        };
 
-            ocData[index].responsable = nombre;
+        window.cancelarEdicion = function(index) {
+            // Simplemente re-renderiza para volver al estado anterior
             renderizarTabla(ocData);
         };
 
-        // 3. Ejecutar al cargar la página
+        // 4. Ejecutar al cargar la página
         document.addEventListener('DOMContentLoaded', function() {
             renderizarTabla(ocData);
             
