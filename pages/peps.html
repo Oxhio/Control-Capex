@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Control-Capex - POSPRE por CEGE</title>
+    <title>Control-Capex - PEPs por CEGE</title>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -14,7 +14,7 @@
 <body>
 
     <div class="container">
-        <!-- ===== HEADER CON MENÚ DE PESTAÑAS ===== -->
+        <!-- ===== HEADER CON MENÚ DE PESTAÑAS (CORREGIDO) ===== -->
         <header class="header">
             <div class="header-left">
                 <h1><i class="fas fa-building"></i> Control-Capex</h1>
@@ -31,19 +31,19 @@
                     <a href="oc.html" class="nav-item" data-page="oc">
                         <i class="fas fa-file-invoice"></i> Órdenes de Compra
                     </a>
-                    <!-- NUEVA PESTAÑA PEPs -->
+                    <!-- Pestaña activa para PEPs -->
                     <a href="peps.html" class="nav-item active" data-page="peps">
-                        <i class="fas fa-project-diagram"></i> POSPRE por CEGE
+                        <i class="fas fa-project-diagram"></i> PEPs por CEGE
                     </a>
                 </nav>
 
-                <!-- FILTROS CEGE (El código largo) -->
+                <!-- FILTROS CEGE -->
                 <div class="filters" style="margin:0;">
                     <div class="filter-group">
                         <label style="margin-right: 4px;"><i class="fas fa-filter"></i> CEGE:</label>
                         <select id="filtroCEGE" style="padding: 4px 24px 4px 8px;">
                             <option value="todos">🌐 Todos los CEGE</option>
-                            <!-- Datos de ejemplo que se cargarán -->
+                            <!-- Ejemplos de CEGEs -->
                             <option value="0209A0Z861">0209A0Z861</option>
                             <option value="0209A0Z777">0209A0Z777</option>
                             <option value="0209A0Z999">0209A0Z999</option>
@@ -53,19 +53,19 @@
             </div>
         </header>
 
-        <!-- ===== KPI's (Cantidad de POSPRE) ===== -->
+        <!-- ===== KPI's (Cantidad de PEPs/POSPRE) ===== -->
         <div class="metrics-grid" id="metricsGrid">
             <div class="metric-card">
-                <div class="label"><i class="fas fa-folder-open"></i> Cantidad de POSPRE</div>
+                <div class="label"><i class="fas fa-folder-open"></i> Cantidad de PEPs / POSPRE</div>
                 <div class="value" id="totalPEPs">0</div>
                 <div class="sub">Proyectos activos en este CEGE</div>
             </div>
         </div>
 
-        <!-- ===== TABLA DE DETALLE DE POSPRE ===== -->
+        <!-- ===== TABLA DE DETALLE DE PEPs ===== -->
         <div class="table-wrapper">
             <div class="table-header">
-                <h2><i class="fas fa-list-ul"></i> Detalle de POSPRE por CEGE</h2>
+                <h2><i class="fas fa-list-ul"></i> Detalle de PEPs por CEGE</h2>
                 <div class="table-actions">
                     <button class="btn btn-outline" id="btnExportar"><i class="fas fa-file-export"></i> Exportar</button>
                 </div>
@@ -75,7 +75,7 @@
                     <thead>
                         <tr>
                             <th>CEGE (Código)</th>
-                            <th>POSPRE (Nombre)</th>
+                            <th>PEP / POSPRE</th>
                             <th>Real Ejecutado</th>
                             <th>Comprometido</th>
                             <th>Disponible</th>
@@ -85,7 +85,7 @@
                         <!-- Datos cargados por JavaScript -->
                         <tr>
                             <td colspan="5" class="px-4 py-8 text-center text-gray-400 italic">
-                                Selecciona un CEGE para cargar sus POSPRE.
+                                Selecciona un CEGE para cargar sus PEPs.
                             </td>
                         </tr>
                     </tbody>
@@ -98,7 +98,7 @@
     <!--  LÓGICA JAVASCRIPT (EJEMPLO) -->
     <!-- ============================ -->
     <script>
-        // 1. Datos de ejemplo con los campos corregidos (CEGE es el código, POSPRE es el nombre)
+        // Datos de ejemplo
         const dataPEPs = [
             { cege: '0209A0Z861', pospre: 'CL-RM-TR-MAC', real: 450000, comprometido: 800000, disponible: 1200000 },
             { cege: '0209A0Z861', pospre: 'CL-RM-SN-COC', real: 120000, comprometido: 200000, disponible: 300000 },
@@ -108,21 +108,17 @@
             { cege: '0209A0Z999', pospre: 'CL-RM-SN-COC', real: 100000, comprometido: 50000, disponible: 50000 },
         ];
 
-        // 2. Lógica para renderizar la tabla y el KPI
         function renderizarTabla(cegeSeleccionado) {
             const tbody = document.getElementById('tablaPEPs');
             
-            // Filtrar datos
             const filtrados = cegeSeleccionado === 'todos' 
                 ? dataPEPs 
                 : dataPEPs.filter(item => item.cege === cegeSeleccionado);
 
-            // Actualizar KPI
             document.getElementById('totalPEPs').textContent = filtrados.length;
 
-            // Actualizar tabla
             if (filtrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-400 italic">No hay POSPRE para este CEGE.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-8 text-center text-gray-400 italic">No hay PEPs para este CEGE.</td></tr>`;
                 return;
             }
 
@@ -137,14 +133,10 @@
             `).join('');
         }
 
-        // 3. Eventos y carga inicial
         document.addEventListener('DOMContentLoaded', function() {
             const filtroCEGE = document.getElementById('filtroCEGE');
-            
-            // Renderizar inicial
             renderizarTabla(filtroCEGE.value);
 
-            // Escuchar cambios en el filtro
             filtroCEGE.addEventListener('change', function() {
                 renderizarTabla(this.value);
             });
